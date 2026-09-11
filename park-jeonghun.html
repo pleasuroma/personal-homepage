@@ -1,0 +1,635 @@
+<title>박정훈 내과수의사</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #eff2ea;
+    --paper: #e7ece1;
+    --surface: #e0e7d9;
+    --ink: #1c2620;
+    --ink-soft: #55635a;
+    --ink-faint: #85917f;
+    --line: #c7d1bd;
+    --accent: #2b6e58;
+    --accent-strong: #194437;
+    --amber: #b8702f;
+    --grid-line: rgba(43,110,88,0.10);
+    --focus: #1e4e3d;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #121712;
+      --paper: #171d16;
+      --surface: #1c2419;
+      --ink: #e8ede2;
+      --ink-soft: #a7b39e;
+      --ink-faint: #6f7b68;
+      --line: #303a2c;
+      --accent: #5cb695;
+      --accent-strong: #8fd6ba;
+      --amber: #e2a15c;
+      --grid-line: rgba(92,182,149,0.09);
+      --focus: #8fd6ba;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #121712;
+    --paper: #171d16;
+    --surface: #1c2419;
+    --ink: #e8ede2;
+    --ink-soft: #a7b39e;
+    --ink-faint: #6f7b68;
+    --line: #303a2c;
+    --accent: #5cb695;
+    --accent-strong: #8fd6ba;
+    --amber: #e2a15c;
+    --grid-line: rgba(92,182,149,0.09);
+    --focus: #8fd6ba;
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family:"Work Sans", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3{ text-wrap:balance; }
+  ::selection{ background: var(--accent); color: var(--bg); }
+  :focus-visible{ outline: 2px solid var(--focus); outline-offset: 3px; }
+
+  .page{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+  }
+
+  /* ---------- top record bar ---------- */
+  .recordbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:12px;
+    padding: 22px 0 16px;
+    border-bottom: 1px solid var(--line);
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+  }
+  .recordbar strong{ color: var(--ink-soft); font-weight:500; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding: 56px 0 40px;
+    background-image:
+      repeating-linear-gradient(to bottom, var(--grid-line) 0 1px, transparent 1px 28px);
+    background-position: 0 0;
+  }
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 18px;
+  }
+  h1.name{
+    font-family:"Petrona", Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(40px, 6.5vw, 58px);
+    line-height: 1.05;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .role{
+    font-family:"Petrona", Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 21px;
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+  }
+  .lede{
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  .pulse{
+    display:block;
+    width: 100%;
+    height: auto;
+    margin-top: 34px;
+  }
+  .pulse path{
+    fill:none;
+    stroke: var(--amber);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .pulse circle{ fill: var(--amber); }
+  @media (prefers-reduced-motion: no-preference){
+    .pulse path.trace{
+      stroke-dasharray: 900;
+      stroke-dashoffset: 900;
+      animation: draw 1.6s ease-out 0.15s forwards;
+    }
+  }
+  @keyframes draw{ to{ stroke-dashoffset: 0; } }
+
+  /* ---------- section shell ---------- */
+  section{ padding: 44px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type{ border-bottom:none; }
+
+  .field-label{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 18px;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .field-label::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background: var(--line);
+  }
+
+  .prose p{
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin: 0 0 16px;
+  }
+  .prose p:last-child{ margin-bottom:0; }
+  .prose strong{ color: var(--ink); font-weight: 600; }
+
+  /* ---------- specialties ---------- */
+  .chart{
+    display:flex;
+    flex-direction:column;
+  }
+  .chart-row{
+    display:grid;
+    grid-template-columns: 128px 1fr;
+    gap: 18px;
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .chart-row:first-child{ border-top:none; }
+  .chart-term{
+    font-family:"Petrona", Georgia, serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    padding-top: 1px;
+  }
+  .chart-desc{
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- timeline ---------- */
+  .timeline{ list-style:none; margin:0; padding:0; }
+  .timeline li{
+    display:grid;
+    grid-template-columns: 22px 1fr;
+    gap: 16px;
+    padding-bottom: 22px;
+    position: relative;
+  }
+  .timeline li:last-child{ padding-bottom:0; }
+  .timeline .dot{
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 6px;
+    position: relative;
+  }
+  .timeline li:not(:last-child) .dot::after{
+    content:"";
+    position:absolute;
+    top: 13px; left: 4px;
+    width: 1px;
+    height: calc(100% + 20px);
+    background: var(--line);
+  }
+  .timeline h3{
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .timeline p{
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- philosophy ---------- */
+  .philosophy{
+    background: var(--paper);
+    border-radius: 4px;
+    padding: 36px 32px;
+    border-left: 2px solid var(--amber);
+  }
+  .philosophy blockquote{
+    margin:0 0 14px;
+    font-family:"Petrona", Georgia, serif;
+    font-style: italic;
+    font-size: 21px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .philosophy cite{
+    font-style:normal;
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- contact ---------- */
+  .form{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 28px;
+  }
+  .form-item{ min-width:0; }
+  .form-item.full{ grid-column: 1 / -1; }
+  .form-item .k{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 6px;
+  }
+  .form-item .v{
+    font-size: 15.5px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 8px;
+    word-break: break-word;
+  }
+  .form-item .v.placeholder{ color: var(--ink-faint); }
+  .form-item .v a{ color: var(--accent); text-decoration: none; }
+  .form-item .v a:hover{ text-decoration: underline; }
+
+  /* ---------- guestbook ---------- */
+  .guestbook-form{
+    display:flex;
+    flex-direction:column;
+    gap: 12px;
+    max-width: 520px;
+    margin-bottom: 36px;
+  }
+  .guestbook-form input,
+  .guestbook-form textarea{
+    width:100%;
+    font-family:"Work Sans", inherit;
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 10px 12px;
+  }
+  .guestbook-form input:focus,
+  .guestbook-form textarea:focus{
+    outline: none;
+    border-color: var(--accent);
+  }
+  .guestbook-form textarea{ min-height: 76px; resize: vertical; }
+  .guestbook-foot{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap: 12px;
+  }
+  .guestbook-note{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
+  .guestbook-note.error{ color: var(--amber); }
+  .guestbook-submit{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    border-radius: 3px;
+    padding: 10px 22px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .guestbook-submit:hover{ background: var(--accent-strong); }
+  .guestbook-submit:disabled{ opacity: 0.55; cursor: default; }
+
+  .guestbook-list{ display:flex; flex-direction:column; }
+  .guestbook-entry{
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .guestbook-entry:first-child{ border-top:none; }
+  .guestbook-entry .meta{
+    display:flex;
+    justify-content:space-between;
+    gap: 12px;
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+  }
+  .guestbook-entry .meta .name{ color: var(--accent); font-weight: 500; }
+  .guestbook-entry p{
+    margin:0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    word-break: break-word;
+  }
+  .guestbook-empty{
+    font-size: 14.5px;
+    color: var(--ink-faint);
+    padding: 4px 0;
+  }
+
+  footer{
+    padding: 32px 0 0;
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    display:flex;
+    justify-content:space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 480px){
+    .chart-row{ grid-template-columns: 1fr; gap: 6px; }
+    .form{ grid-template-columns: 1fr; }
+    .philosophy{ padding: 28px 20px; }
+  }
+</style>
+
+<div class="page">
+
+  <div class="recordbar">
+    <span>SMALL ANIMAL INTERNAL MEDICINE</span>
+    <span>RECORD NO. <span id="visit-count" style="font-variant-numeric: tabular-nums;">······</span></span>
+  </div>
+
+  <header class="hero">
+    <p class="eyebrow">내과 전문 수의사</p>
+    <h1 class="name">박정훈</h1>
+    <p class="role">Junghoon Park, DVM, MS, PhD(c)</p>
+    <p class="lede">
+      심장, 신장, 내분비 질환을 중심으로 반려동물의 내과 진료를 맡고 있습니다.
+      겉으로 드러난 증상보다 그 아래 놓인 원인을 먼저 살피는 진료를 지향합니다.
+    </p>
+
+    <svg class="pulse" viewBox="0 0 700 90" preserveAspectRatio="none" role="img" aria-label="심전도 파형이 발자국 모양으로 이어지는 장식 그래픽">
+      <path class="trace" d="M0 45 H210 L230 45 L245 12 L262 78 L278 20 L292 45 L320 45
+        Q334 45 336 32 Q338 22 348 22 Q358 22 360 34 Q362 45 376 45
+        Q388 45 390 36 Q392 30 398 30 Q404 30 406 38 Q408 45 420 45 H700" />
+      <circle cx="230" cy="45" r="2.4"></circle>
+    </svg>
+  </header>
+
+  <section>
+    <p class="field-label">소개</p>
+    <div class="prose">
+      <p>
+        수의과대학을 졸업한 뒤 대형 동물병원 내과에서 다년간 임상 경험을 쌓았습니다.
+        검사 결과 한 줄, 수치 하나까지 놓치지 않으려 하며, <strong>보호자가 알아들을 수 있는 말로 설명하는 것</strong>도
+        진료의 일부라고 생각합니다.
+      </p>
+      <p>
+        만성질환은 하루아침에 좋아지지 않는다는 것을 알기에, 장기적인 관리 계획을 보호자와 함께 세우고
+        재진마다 그 계획을 다시 점검하는 방식으로 진료합니다.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <p class="field-label">전문 분야</p>
+    <div class="chart">
+      <div class="chart-row">
+        <div class="chart-term">심장내과</div>
+        <div class="chart-desc">판막질환, 심근병증 등 심장질환의 진단과 약물 관리</div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-term">신장·비뇨기내과</div>
+        <div class="chart-desc">만성 신부전, 요로결석, 방광염 등 비뇨기계 질환</div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-term">내분비내과</div>
+        <div class="chart-desc">당뇨병, 갑상선·부신 질환 등 호르몬 관련 질환</div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-term">소화기내과</div>
+        <div class="chart-desc">만성 구토·설사, 췌장염 등 소화기계 질환</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="field-label">약력</p>
+    <ul class="timeline">
+      <li>
+        <span class="dot"></span>
+        <div>
+          <h3>수의사 면허 취득</h3>
+          <p>수의과대학 졸업 및 수의사 국가고시 합격</p>
+        </div>
+      </li>
+      <li>
+        <span class="dot"></span>
+        <div>
+          <h3>내과 임상 수련</h3>
+          <p>동물병원 내과에서 인턴 및 전공의 과정 수료</p>
+        </div>
+      </li>
+      <li>
+        <span class="dot"></span>
+        <div>
+          <h3>내과 진료 담당</h3>
+          <p>현재 소동물 내과 진료를 전담하고 있습니다</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="field-label">진료 철학</p>
+    <div class="philosophy">
+      <blockquote>“동물은 아프다고 말하지 못합니다.<br>그래서 더 꼼꼼히, 더 자주 들여다봐야 한다고 생각합니다.”</blockquote>
+      <cite>— 박정훈</cite>
+    </div>
+  </section>
+
+  <section>
+    <p class="field-label">연락처</p>
+    <div class="form">
+      <div class="form-item full">
+        <p class="k">병원</p>
+        <p class="v">웨스턴동물의료센터</p>
+      </div>
+      <div class="form-item">
+        <p class="k">전화</p>
+        <p class="v"><a href="tel:010-9077-7510">010-9077-7510</a></p>
+      </div>
+      <div class="form-item">
+        <p class="k">이메일</p>
+        <p class="v placeholder">example@email.com</p>
+      </div>
+      <div class="form-item full">
+        <p class="k">주소</p>
+        <p class="v">서울시 마포구 신촌로 110</p>
+      </div>
+      <div class="form-item full">
+        <p class="k">진료 시간</p>
+        <p class="v placeholder">평일 00:00 – 00:00 · 토요일 00:00 – 00:00 · 일/공휴일 휴진</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="field-label">방명록</p>
+    <form class="guestbook-form" id="guestbook-form">
+      <input type="text" name="name" placeholder="이름" maxlength="40" required autocomplete="name">
+      <textarea name="message" placeholder="남기고 싶은 말을 적어주세요" maxlength="500" required></textarea>
+      <div class="guestbook-foot">
+        <p class="guestbook-note" id="guestbook-note">남기신 이름과 메시지는 이 페이지에 공개됩니다.</p>
+        <button type="submit" class="guestbook-submit">남기기</button>
+      </div>
+    </form>
+    <div class="guestbook-list" id="guestbook-list">
+      <p class="guestbook-empty" id="guestbook-empty">아직 남겨진 메시지가 없습니다. 첫 메시지를 남겨보세요.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 박정훈</span>
+    <span>Small Animal Internal Medicine</span>
+  </footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+  // Supabase는 이 파일이 실제 웹 호스팅(Vercel, Netlify, GitHub Pages 등)에
+  // 올라가 있을 때만 응답합니다. Claude Artifact 미리보기에서는 외부 네트워크
+  // 요청이 막혀 있어 아래 카운터가 동작하지 않습니다.
+  (function () {
+    var SUPABASE_URL = "https://aanzuovgmskpvrdaiydj.supabase.co";
+    var SUPABASE_KEY = "sb_publishable_icU6F0n6PzSI3N8dBVK74Q_soVq9N9M";
+
+    if (!window.supabase || !window.supabase.createClient) return;
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    var countEl = document.getElementById("visit-count");
+    sb.rpc("increment_site_views").then(function (res) {
+      if (res.error || typeof res.data !== "number" || !countEl) return;
+      countEl.textContent = String(res.data).padStart(6, "0");
+    });
+
+    // ---- guestbook ----
+    var form = document.getElementById("guestbook-form");
+    var list = document.getElementById("guestbook-list");
+    var empty = document.getElementById("guestbook-empty");
+    var note = document.getElementById("guestbook-note");
+    var noteDefault = note ? note.textContent : "";
+
+    function formatDate(iso) {
+      return new Date(iso).toLocaleString("ko-KR", {
+        year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit"
+      });
+    }
+
+    function renderEntries(entries) {
+      if (!list) return;
+      list.querySelectorAll(".guestbook-entry").forEach(function (n) { n.remove(); });
+      if (!entries || !entries.length) {
+        if (empty) empty.hidden = false;
+        return;
+      }
+      if (empty) empty.hidden = true;
+      entries.forEach(function (entry) {
+        var item = document.createElement("div");
+        item.className = "guestbook-entry";
+        var meta = document.createElement("div");
+        meta.className = "meta";
+        var name = document.createElement("span");
+        name.className = "name";
+        name.textContent = entry.name;
+        var date = document.createElement("span");
+        date.textContent = formatDate(entry.created_at);
+        meta.appendChild(name);
+        meta.appendChild(date);
+        var msg = document.createElement("p");
+        msg.textContent = entry.message;
+        item.appendChild(meta);
+        item.appendChild(msg);
+        list.appendChild(item);
+      });
+    }
+
+    function loadEntries() {
+      sb.from("guestbook").select("name, message, created_at")
+        .order("created_at", { ascending: false }).limit(50)
+        .then(function (res) {
+          if (res.error) return;
+          renderEntries(res.data);
+        });
+    }
+
+    if (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var name = form.name.value.trim();
+        var message = form.message.value.trim();
+        if (!name || !message) return;
+        var btn = form.querySelector(".guestbook-submit");
+        btn.disabled = true;
+        if (note) { note.textContent = "등록하는 중…"; note.classList.remove("error"); }
+        sb.from("guestbook").insert({ name: name, message: message }).then(function (res) {
+          btn.disabled = false;
+          if (res.error) {
+            if (note) { note.textContent = "등록에 실패했습니다. 잠시 후 다시 시도해주세요."; note.classList.add("error"); }
+            return;
+          }
+          form.reset();
+          if (note) { note.textContent = noteDefault; note.classList.remove("error"); }
+          loadEntries();
+        });
+      });
+    }
+
+    loadEntries();
+    sb.channel("guestbook-live")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "guestbook" }, loadEntries)
+      .subscribe();
+  })();
+</script>
