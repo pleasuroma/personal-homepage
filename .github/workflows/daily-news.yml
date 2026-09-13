@@ -1,0 +1,43 @@
+name: Daily healthcare news update
+
+# Refreshes news.json with the latest news for veterinarians, doctors,
+# pharmacists, and dentists every morning before 8am KST.
+#
+# Note: GitHub only runs `schedule` triggers on the default branch, so
+# this cron starts firing automatically once this workflow file lands on
+# the repository's default branch. Until then (or any time in between),
+# trigger it manually from the Actions tab ("Run workflow").
+
+on:
+  schedule:
+    # 22:00 UTC = 07:00 KST (next day) — an hour of buffer before 08:00 KST.
+    - cron: "0 22 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch latest healthcare news
+        run: node scripts/fetch-news.mjs
+
+      - name: Commit and push if news.json changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- news.json; then
+            echo "No news changes."
+            exit 0
+          fi
+          git add news.json
+          git commit -m "chore: update daily healthcare news"
+          git push

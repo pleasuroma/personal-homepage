@@ -389,6 +389,52 @@
     .chart-row{ grid-template-columns: 1fr; gap: 6px; }
     .form{ grid-template-columns: 1fr; }
     .philosophy{ padding: 28px 20px; }
+    .news-item{ grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  /* ---------- healthcare news ---------- */
+  .news-meta{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--ink-faint);
+    margin: -8px 0 20px;
+  }
+  .news-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; }
+  .news-item{
+    display:grid;
+    grid-template-columns: 96px 1fr;
+    gap: 16px;
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .news-item:first-child{ border-top:none; }
+  .news-tag{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    padding-top: 2px;
+  }
+  .news-body h3{
+    margin: 0 0 4px;
+    font-family:"Petrona", Georgia, serif;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .news-body h3 a{ color: var(--ink); text-decoration:none; }
+  .news-body h3 a:hover{ text-decoration: underline; color: var(--accent-strong); }
+  .news-body .meta{
+    margin:0;
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+  .news-empty{
+    font-size: 14.5px;
+    color: var(--ink-faint);
+    padding: 4px 0;
   }
 </style>
 
@@ -429,6 +475,14 @@
         재진마다 그 계획을 다시 점검하는 방식으로 진료합니다.
       </p>
     </div>
+  </section>
+
+  <section>
+    <p class="field-label">의료계 주요 뉴스</p>
+    <p class="news-meta" id="news-meta">매일 아침 8시 이전, 수의사·의사·약사·치과의사의 주요 현안 뉴스 4건을 갱신합니다.</p>
+    <ul class="news-list" id="news-list">
+      <li class="news-empty" id="news-empty">뉴스를 불러오는 중…</li>
+    </ul>
   </section>
 
   <section>
@@ -536,6 +590,89 @@
 
 </div>
 
+<script>
+  // ---- daily healthcare news (news.json is refreshed every morning by
+  // .github/workflows/daily-news.yml — see scripts/fetch-news.mjs) ----
+  (function () {
+    var list = document.getElementById("news-list");
+    var meta = document.getElementById("news-meta");
+    var metaDefault = meta ? meta.textContent : "";
+
+    function formatDate(iso) {
+      try {
+        return new Date(iso).toLocaleString("ko-KR", {
+          year: "numeric", month: "2-digit", day: "2-digit",
+          hour: "2-digit", minute: "2-digit"
+        });
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function showMessage(text) {
+      if (!list) return;
+      list.innerHTML = "";
+      var li = document.createElement("li");
+      li.className = "news-empty";
+      li.textContent = text;
+      list.appendChild(li);
+    }
+
+    function render(data) {
+      var items = (data && data.items) || [];
+      if (!items.length) {
+        showMessage("표시할 뉴스가 없습니다.");
+        return;
+      }
+      list.innerHTML = "";
+      items.forEach(function (item) {
+        var li = document.createElement("li");
+        li.className = "news-item";
+
+        var tag = document.createElement("span");
+        tag.className = "news-tag";
+        tag.textContent = item.professionLabel || "";
+
+        var body = document.createElement("div");
+        body.className = "news-body";
+
+        var h3 = document.createElement("h3");
+        var a = document.createElement("a");
+        a.href = item.link;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.textContent = item.title;
+        h3.appendChild(a);
+
+        var metaP = document.createElement("p");
+        metaP.className = "meta";
+        metaP.textContent = [item.source, formatDate(item.publishedAt)].filter(Boolean).join(" · ");
+
+        body.appendChild(h3);
+        body.appendChild(metaP);
+        li.appendChild(tag);
+        li.appendChild(body);
+        list.appendChild(li);
+      });
+
+      if (meta && data && data.generatedAt) {
+        meta.textContent = metaDefault + " (최종 갱신: " + formatDate(data.generatedAt) + ")";
+      }
+    }
+
+    if (list) {
+      fetch("news.json", { cache: "no-store" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("news fetch failed");
+          return res.json();
+        })
+        .then(render)
+        .catch(function () {
+          showMessage("뉴스를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
+        });
+    }
+  })();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
   // Supabase는 이 파일이 실제 웹 호스팅(Vercel, Netlify, GitHub Pages 등)에
