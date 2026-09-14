@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>박정훈 내과수의사</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -436,6 +437,68 @@
     color: var(--ink-faint);
     padding: 4px 0;
   }
+  .news-summary{
+    margin: 8px 0 0;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+  .news-analysis{ margin-top: 10px; }
+  .news-analysis > summary{
+    cursor: pointer;
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+  }
+  .news-analysis > summary::-webkit-details-marker{ display:none; }
+  .news-analysis > summary::before{
+    content: "▸";
+    font-size: 10px;
+  }
+  .news-analysis[open] > summary::before{ content: "▾"; }
+  .news-analysis-body{
+    margin-top: 12px;
+    padding-left: 14px;
+    border-left: 1px solid var(--line);
+  }
+  .news-analysis-body h4{
+    margin: 0 0 6px;
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+  .news-analysis-body h4 + ul{ margin-bottom: 14px; }
+  .news-analysis-body ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .news-analysis-body li{
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .news-analysis-body li:last-child{ margin-bottom: 0; }
+  .news-analysis-body .party{
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .news-caveat{
+    margin: 22px 0 0;
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--ink-faint);
+  }
 </style>
 
 <div class="page">
@@ -618,6 +681,52 @@
       list.appendChild(li);
     }
 
+    function buildClaimList(entries, valueKey) {
+      var ul = document.createElement("ul");
+      entries.forEach(function (entry) {
+        var li = document.createElement("li");
+        var party = document.createElement("span");
+        party.className = "party";
+        party.textContent = entry.party + " — ";
+        li.appendChild(party);
+        li.appendChild(document.createTextNode(entry[valueKey]));
+        ul.appendChild(li);
+      });
+      return ul;
+    }
+
+    function buildAnalysis(analysis) {
+      if (!analysis) return null;
+      var surface = analysis.surfaceClaims || [];
+      var hidden = analysis.hiddenMotives || [];
+      if (!surface.length && !hidden.length) return null;
+
+      var details = document.createElement("details");
+      details.className = "news-analysis";
+      var summary = document.createElement("summary");
+      summary.textContent = "심층 분석";
+      details.appendChild(summary);
+
+      var wrap = document.createElement("div");
+      wrap.className = "news-analysis-body";
+
+      if (surface.length) {
+        var h1 = document.createElement("h4");
+        h1.textContent = "표면적 주장";
+        wrap.appendChild(h1);
+        wrap.appendChild(buildClaimList(surface, "claim"));
+      }
+      if (hidden.length) {
+        var h2 = document.createElement("h4");
+        h2.textContent = "드러나지 않는 동기 (추론)";
+        wrap.appendChild(h2);
+        wrap.appendChild(buildClaimList(hidden, "motive"));
+      }
+
+      details.appendChild(wrap);
+      return details;
+    }
+
     function render(data) {
       var items = (data && data.items) || [];
       if (!items.length) {
@@ -650,10 +759,29 @@
 
         body.appendChild(h3);
         body.appendChild(metaP);
+
+        if (item.summary) {
+          var summaryP = document.createElement("p");
+          summaryP.className = "news-summary";
+          summaryP.textContent = item.summary;
+          body.appendChild(summaryP);
+        }
+
+        var analysis = buildAnalysis(item.analysis);
+        if (analysis) body.appendChild(analysis);
+
         li.appendChild(tag);
         li.appendChild(body);
         list.appendChild(li);
       });
+
+      if (items.some(function (item) { return item.analysis; })) {
+        var caveat = document.createElement("p");
+        caveat.className = "news-caveat";
+        caveat.textContent =
+          "'드러나지 않는 동기'는 보도된 사실이 아니라 이해관계 구조에서 도출한 추론입니다.";
+        list.parentNode.appendChild(caveat);
+      }
 
       if (meta && data && data.generatedAt) {
         meta.textContent = metaDefault + " (최종 갱신: " + formatDate(data.generatedAt) + ")";

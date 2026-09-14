@@ -1,0 +1,16 @@
+{
+  "name": "personal-homepage",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "박정훈 내과수의사 개인 홈페이지",
+  "license": "ISC",
+  "scripts": {
+    "news:fetch": "node scripts/fetch-news.mjs",
+    "news:analyze": "node scripts/analyze-news.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0",
+    "zod": "^4.6.5"
+  }
+}
