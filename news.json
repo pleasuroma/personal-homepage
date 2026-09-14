@@ -1,6 +1,14 @@
 {
-  "generatedAt": "2026-09-13T08:00:00+09:00",
+  "generatedAt": "2026-09-14T08:00:00+09:00",
   "items": [
+    {
+      "profession": "pharmacist",
+      "professionLabel": "약사",
+      "title": "\"약배송 확대 막겠다\" 약사들 거리로…약준모, 13일 청와대 앞 집회",
+      "source": "약사공론",
+      "link": "https://www.kpanews.co.kr/news/articleView.html?idxno=542035",
+      "publishedAt": "2026-09-13T12:00:00+09:00"
+    },
     {
       "profession": "doctor",
       "professionLabel": "의사",
@@ -10,28 +18,20 @@
       "publishedAt": "2026-09-11T09:00:00+09:00"
     },
     {
-      "profession": "pharmacist",
-      "professionLabel": "약사",
-      "title": "약사회 \"약배송 저지, 총 투쟁\"…환자단체 \"약배송 막으면 안 돼\"",
-      "source": "머니투데이",
-      "link": "https://www.mt.co.kr/thebio/2026/09/09/2026090914554678868",
-      "publishedAt": "2026-09-09T14:55:46+09:00"
-    },
-    {
       "profession": "vet",
       "professionLabel": "수의사",
-      "title": "수의사·수의대생 3천 명 여의도에 모였다 '동물의료 말살정책 중단' 한목소리",
-      "source": "데일리벳",
-      "link": "https://www.dailyvet.co.kr/news/policy/295424",
-      "publishedAt": "2026-09-02T09:00:00+09:00"
+      "title": "전국 수의사, '진료비·진료기록 공개 의무화 반대' 한 목소리",
+      "source": "축산신문",
+      "link": "https://www.chuksannews.co.kr/news/article.html?no=273436",
+      "publishedAt": "2026-09-03T09:00:00+09:00"
     },
     {
       "profession": "dentist",
       "professionLabel": "치과의사",
-      "title": "치과의사 예비시험 실기시험, 응시자 21명 전원 불합격해 합격률 0% 기록",
+      "title": "'국회도 공분' 초저수가 대형치과 환자 사망 일파만파",
       "source": "치의신보",
-      "link": "https://www.dailydental.co.kr/news/article.html?no=138796",
-      "publishedAt": "2026-08-23T09:00:00+09:00"
+      "link": "https://www.dailydental.co.kr/news/article.html?no=138737",
+      "publishedAt": "2026-09-03T09:00:00+09:00"
     }
   ]
 }
