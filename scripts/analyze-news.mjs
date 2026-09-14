@@ -23,7 +23,7 @@ const NEWS_PATH = path.join(
   "news.json"
 );
 
-const MODEL = "claude-opus-5";
+const MODEL = "claude-sonnet-5";
 
 const AnalysisSchema = z.object({
   analyses: z.array(
