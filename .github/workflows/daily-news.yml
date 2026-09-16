@@ -1,18 +1,15 @@
 name: Daily healthcare news update
 
-# Refreshes news.json with the latest news for veterinarians, doctors,
-# pharmacists, and dentists every morning before 8am KST, then has Claude
-# research each headline and write a summary and conflict analysis.
+# Manual fallback for refreshing news.json (headlines, plus the summary and
+# analysis when ANTHROPIC_API_KEY is set).
 #
-# Note: GitHub only runs `schedule` triggers on the default branch, so
-# this cron starts firing automatically once this workflow file lands on
-# the repository's default branch. Also runnable manually from the
-# Actions tab ("Run workflow").
+# The daily run is NOT done here. A Claude Code Routine fires every morning
+# at 21:00 UTC / 06:00 KST and does the whole job — headlines, research,
+# analysis, commit — on the account's existing Claude subscription, so it
+# costs nothing per run. The cron below is therefore disabled; this workflow
+# stays as a manual escape hatch from the Actions tab ("Run workflow").
 
 on:
-  schedule:
-    # 22:00 UTC = 07:00 KST (next day) — an hour of buffer before 08:00 KST.
-    - cron: "0 22 * * *"
   workflow_dispatch: {}
 
 permissions:
