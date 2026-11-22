@@ -1,0 +1,2 @@
+{"name":"바로스캔","short_name":"바로스캔","description":"문서를 스캔해 PDF로, 명함을 찍어 연락처로","start_url":"./","scope":"./","display":"standalone","orientation":"portrait","background_color":"#eef1ee","theme_color":"#0e6b58","lang":"ko",
+"icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
