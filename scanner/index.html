@@ -96,6 +96,7 @@ pre{white-space:pre-wrap;word-break:break-all;background:var(--surface);border:1
 
 <!-- 문서 -->
 <section id="v-doc" class="view" hidden>
+  <label class="chk" style="margin:0 2px 14px"><input type="checkbox" id="autoImg">찍을 때마다 갤러리(사진 앨범)에도 JPG로 저장</label>
   <div id="docEmpty" class="empty">아직 찍은 페이지가 없습니다.<br><b>촬영</b>을 누를 때마다 한 장씩 순서대로 쌓입니다.<br>갤러리에 있는 사진은 <b>앨범</b>에서 여러 장을 한 번에 고를 수 있어요.</div>
   <div id="pages" class="grid"></div>
   <div class="panel" id="pdfPanel" hidden>
@@ -104,6 +105,8 @@ pre{white-space:pre-wrap;word-break:break-all;background:var(--surface);border:1
       <label class="field">용지<select id="pdfSize"><option value="a4">A4 (210×297mm)</option><option value="fit">사진 비율 그대로</option></select></label>
       <label class="field">공유<button class="btn" id="pdfShare" type="button" style="min-height:44px">PDF 공유</button></label>
     </div>
+    <div class="two"><button class="btn" id="imgSave" type="button" style="min-height:44px">사진으로 저장</button><button class="btn" id="imgShare" type="button" style="min-height:44px">사진 공유</button></div>
+    <span class="hint" style="margin:0">사진은 페이지마다 JPG 한 장씩 저장되며, 갤러리 앱의 Download 앨범에서 볼 수 있습니다.</span>
     <span class="hint" style="margin:0">페이지를 누르면 자르기·보정·순서 변경·삭제를 할 수 있습니다.</span>
   </div>
   <div class="dock">
@@ -308,7 +311,7 @@ async function onFiles(e){
     busy(list.length>1?`자동 보정 중 ${i+1} / ${list.length}`:'테두리 찾고 보정하는 중…');await sleep(40);
     const it={file:f,kind:t.kind,rot:0,filter:t.kind==='doc'?'scan':'vivid'};
     try{await process(it)}catch(err){console.error(err);toast('사진을 처리하지 못했습니다. 다시 찍어 주세요.');continue}
-    if(t.kind==='doc')doc.push(it);else card[t.side+i]=it;
+    if(t.kind==='doc'){doc.push(it);if($('#autoImg').checked){saveBlob(it.blob,imgName(doc.length-1));await sleep(300)}}else card[t.side+i]=it;
   }
   busy();
   if(t.kind==='doc'){drawDoc();if(doc.length)toast(`${doc.length}페이지 · 계속 찍거나 PDF로 저장하세요`)}else{drawCard();runOCR()}
@@ -343,6 +346,14 @@ async function buildPdf(){
 $('#pdfSave').onclick=async()=>{const f=await buildPdf();if(f){saveBlob(f,f.name);toast(`${f.name} 저장 · ${doc.length}페이지, ${(f.size/1048576).toFixed(1)}MB`,4000)}};
 $('#pdfShare').onclick=async()=>{const f=await buildPdf();if(!f)return;
   if(navigator.canShare?.({files:[f]})){try{await navigator.share({files:[f],title:f.name})}catch(e){}}else{saveBlob(f,f.name);toast('공유를 지원하지 않아 파일로 저장했습니다')}};
+
+const AUTO_KEY='baroscan.autoImg',imgName=i=>`scan_${stamp()}_${String(i+1).padStart(2,'0')}.jpg`;
+try{$('#autoImg').checked=localStorage.getItem(AUTO_KEY)==='1'}catch(e){}
+$('#autoImg').onchange=e=>{try{localStorage.setItem(AUTO_KEY,e.target.checked?'1':'0')}catch(_){}if(e.target.checked)toast('이제 찍은 페이지가 갤러리의 Download 앨범에도 저장됩니다',4000)};
+async function saveImages(){for(const[i,it]of doc.entries()){saveBlob(it.blob,imgName(i));if(i<doc.length-1)await sleep(500)}}
+$('#imgSave').onclick=async()=>{await saveImages();toast(`사진 ${doc.length}장 저장 · 갤러리 앱의 Download 앨범에서 볼 수 있습니다`,5000)};
+$('#imgShare').onclick=async()=>{const files=doc.map((it,i)=>new File([it.blob],imgName(i),{type:'image/jpeg'}));
+  if(navigator.canShare?.({files})){try{await navigator.share({files})}catch(e){}}else{await saveImages();toast('공유를 지원하지 않아 사진 파일로 저장했습니다')}};
 
 /* ---------- 편집기 ---------- */
 let ed=null;
