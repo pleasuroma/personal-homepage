@@ -1,2 +1,2 @@
-{"name":"MBTI 견종 매칭","short_name":"견종 매칭","description":"MBTI와 생활 조건으로 나와 맞는 견종을 찾아요","lang":"ko","start_url":"./","scope":"./","display":"standalone","orientation":"portrait","background_color":"#eef3f1","theme_color":"#22695b",
+{"name":"MBTI 견종 매칭","short_name":"견종 매칭","description":"MBTI와 생활 조건으로 나와 맞는 견종을 찾아요","lang":"ko","start_url":"./","scope":"./","display":"standalone","orientation":"portrait","background_color":"#0b1311","theme_color":"#0b1311",
 "icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}
