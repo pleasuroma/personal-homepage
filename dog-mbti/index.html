@@ -384,7 +384,7 @@ const QS=[
 {k:'shed',t:'털 빠짐과 알레르기는 어느 정도까지 괜찮나요?',o:[['ok','상관없어요','털이 많이 빠져도 괜찮아요','털 상관없음'],['mid','적게 빠지면 좋겠어요','가벼운 청소 부담 정도는 괜찮아요','털 적게'],['sens','거의 빠지지 않아야 해요','본인이나 가족에게 알레르기가 있어요','털 거의 없게']]},
 {k:'kid',t:'함께 사는 가족 중 초등학생 이하 자녀가 있나요?',o:[['no','없어요','','어린 자녀 없음'],['yes','있어요','','어린 자녀 있음']]},
 {k:'groom',t:'빗질과 미용에 쓸 수 있는 시간은 어느 정도인가요?',o:[['low','주 1회 이하','털 관리가 간단한 견종이 좋아요','빗질 주 1회 이하'],['mid','주 2~3회 빗질','미용은 가끔 할 수 있어요','빗질 주 2~3회'],['high','매일 빗질, 정기 미용 가능','4~6주마다 미용해도 괜찮아요','매일 빗질·정기 미용']]}];
-const RL=['절대 키우면 안 되는 견종','잘 맞는 견종 한눈에','소형견 자세히','중형견 자세히','대형견 자세히','입양 전 약속'];
+const RL=['절대 키우면 안 되는 견종','잘 맞는 견종 한눈에','흔한 견종 자세히','가끔 만나는 견종 자세히','보기 드문 견종 자세히','입양 전 약속'];
 const FB='MBTI 성향보다 지금의 생활과 잘 맞아 추천됐어요';
 let S={st:{},mode:'intro',qi:0,ri:0},lock=false,R=null;
 
@@ -403,17 +403,17 @@ function score(d){
   if(!pen)pros.unshift('지금의 생활 그대로 이 아이를 맞이할 수 있어요');
   return{d,mb,sc:Math.round(100*(.35*mb+.65*Math.max(0,1-pen))),pros:pros.length?pros.slice(0,3):[FB],cons:cons.sort((a,b)=>b[0]-a[0]).map(x=>x[1])};
 }
-const results=()=>R||(R=B.filter(d=>d.pop<2).map(score).sort((a,b)=>b.sc-a.sc||a.d.pop-b.d.pop||b.mb-a.mb));
+const results=()=>R||(R=B.map(score).sort((a,b)=>b.sc-a.sc||a.d.pop-b.d.pop||b.mb-a.mb));
 const type=()=>[S.st.m0,S.st.m1,S.st.m2,S.st.m3];
 const ring=v=>`<div class="ring" style="--v:${v}"><span>${v}<small>%</small></span></div>`;
 const MET=[['운동량','e'],['외로움 탐','a'],['털 빠짐','s'],['짖음','b'],['털 관리','g'],['훈련 쉬움','t'],['개 친구','dg'],['고양이 친구','ct']];
 const li=(c,a)=>a.map(t=>`<li class="${c}">${t}</li>`).join('');
 const dzl=d=>`${d.mv?'<p class="dz"><b class="mv">MMVD(이첨판막 질환) 고위험군</b>중년(5~6살)부터 매년 심장 청진을 권해요</p>':''}${d.ch?`<p class="dz"><b class="mv">선천성 심장 질환 주의</b>${d.ch.join(' · ')} · 입양 초기에 심장 청진을 권해요</p>`:''}<p class="dz"><span>유전·호발 질환</span>${d.dz.join(' · ')}</p>`;
-const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f(x.pros).slice(0,1))+li('c',[x.d.warn]):li('c',[x.d.warn].concat(f(x.cons).slice(0,1)));return `<div><h3><span class="no">${j}</span>${x.d.n}</h3><span class="v">${x.sc}%</span><p class="note" style="grid-column:1/-1;margin:0">${x.d.note}</p>${dzl(x.d)}<ul class="pc">${L}</ul></div>`};
+const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f(x.pros).slice(0,1))+li('c',[x.d.warn]):li('c',[x.d.warn].concat(f(x.cons).slice(0,1)));return `<div><h3><span class="no">${j}</span>${x.d.n}${good?`<small>${SIZE[x.d.z]}</small>`:''}</h3><span class="v">${x.sc}%</span><p class="note" style="grid-column:1/-1;margin:0">${x.d.note}</p>${dzl(x.d)}<ul class="pc">${L}</ul></div>`};
 const nav=(a,b,mid,okPrev,okNext)=>`<nav class="nav"><button type="button" class="ghost" data-act="${a}"${okPrev?'':' disabled'}>이전</button>${mid}<button type="button" class="ghost" data-act="${b}"${okNext?'':' disabled'}>다음</button></nav>`;
 
 function intro(){return `<div class="eyebrow">국내에서 사랑받는 견종 100종</div><h1>절대 키우면 안 되는 강아지, 그리고 나와 맞는 강아지</h1>
-<p class="lead">MBTI와 지금의 삶을 담은 11개의 질문으로, 100종을 살펴 국내에서 흔히 만나는 견종 가운데 소형·중형·대형별로 피해야 할 견종 3마리와 잘 맞는 견종 3마리를 찾아드려요.</p>
+<p class="lead">MBTI와 지금의 삶을 담은 11개의 질문으로, 100종을 살펴 크기별로 피해야 할 견종 3마리씩, 그리고 흔한 견종부터 보기 드문 견종까지 나와 잘 맞는 6마리를 찾아드려요.</p>
 <div class="tag"><span class="t">MBTI</span><span class="kw sub">성향 · 생활 · 100종</span></div>
 <div class="facts"><span><b>11</b>문항</span><span><b>100</b>견종</span><span><b>6</b>장 결과</span></div>
 <button type="button" class="cta big" data-act="start"><span>나와 맞는 강아지 찾기</span><i aria-hidden="true">→</i></button><p class="tap">버튼을 눌러 시작해요 · 약 1분</p><div class="grow"></div>
@@ -427,19 +427,21 @@ return `<div class="eyebrow">${mb?'MBTI':'함께할 삶'} · ${mb?S.qi+1:S.qi-3}
 const loadPg=()=>`<div class="load"><div class="spin"></div><h2>100마리 친구들의 마음을<br>하나하나 맞춰 보고 있어요</h2><p class="hint">${type().join('')} 당신의 하루를 떠올리며 계산하는 중이에요</p></div>`;
 
 const SZ=['','10kg 미만','10~25kg','25kg 이상'];
-const pick=(R,z,bad)=>{const a=R.filter(x=>x.d.z===z);return bad?[...a].sort((x,y)=>x.sc-y.sc||x.d.pop-y.d.pop).slice(0,3):a.slice(0,3)};
-const group=(R,bad)=>{const G=[1,2,3].map(z=>pick(R,z,bad)),cnt={};G.flat().forEach(x=>(bad?x.cons:x.pros).forEach(t=>cnt[t]=(cnt[t]||0)+1));
+const TIER=[['흔한 견종','국내에서 많이 키워요'],['가끔 만나는 견종','주변에서 가끔 볼 수 있어요'],['보기 드문 견종','만나기 어렵지만 잘 맞아요']];
+const tiers=R=>[0,1,2].map(t=>R.filter(x=>x.d.pop===t).slice(0,[3,2,1][t]));
+const pick=(R,z,bad)=>{const a=R.filter(x=>x.d.z===z&&x.d.pop<2);return bad?[...a].sort((x,y)=>x.sc-y.sc||x.d.pop-y.d.pop).slice(0,3):a.slice(0,3)};
+const group=(R,bad)=>{const G=bad?[1,2,3].map(z=>pick(R,z,1)):tiers(R),H=bad?[1,2,3].map(z=>[SIZE[z]+'견',SZ[z]]):TIER,cnt={};G.flat().forEach(x=>(bad?x.cons:x.pros).forEach(t=>cnt[t]=(cnt[t]||0)+1));
  const com=Object.keys(cnt).filter(t=>cnt[t]>=3).sort((a,b)=>cnt[b]-cnt[a]).slice(0,3),skip=new Set(com);
- return (com.length?`<div class="com"><h3>${bad?'여러 견종에 공통으로 걸리는 점':'여러 견종에 공통으로 잘 맞는 점'}</h3><ul class="pc">${li(bad?'c':'p',com)}</ul></div>`:'')+G.map((a,k)=>{const L=bad?'cons':'pros',gc=a[0][L].filter(t=>!skip.has(t)&&a.every(x=>x[L].includes(t))).slice(0,1),sk=new Set([...skip,...gc]);return `<section class="grp"><h3 class="gh">${SIZE[k+1]}견<small>${SZ[k+1]}</small></h3>${gc.length?`<ul class="pc">${li(bad?'c':'p',gc.map(t=>SIZE[k+1]+'견 공통: '+t))}</ul>`:''}${!bad&&a[0].sc<50?'<p class="hint">지금 생활에선 이 크기의 견종이 전반적으로 쉽지 않아요.</p>':''}<div class="rows${bad?'':' good'}">${a.map((x,j)=>row(x,j+1,!bad,sk)).join('')}</div></section>`}).join('')};
-const detail=(x,j)=>{const d=x.d;return `<article class="det"><div class="dh"><h3><span class="no">${j}</span>${d.n}</h3><span class="v">${x.sc}%</span></div><p class="note">${d.note}</p>${dzl(d)}
+ return (com.length?`<div class="com"><h3>${bad?'여러 견종에 공통으로 걸리는 점':'여러 견종에 공통으로 잘 맞는 점'}</h3><ul class="pc">${li(bad?'c':'p',com)}</ul></div>`:'')+G.map((a,k)=>{const L=bad?'cons':'pros',gc=a.length<2?[]:a[0][L].filter(t=>!skip.has(t)&&a.every(x=>x[L].includes(t))).slice(0,1),sk=new Set([...skip,...gc]);return `<section class="grp"><h3 class="gh">${H[k][0]}<small>${H[k][1]}</small></h3>${gc.length?`<ul class="pc">${li(bad?'c':'p',gc.map(t=>H[k][0]+' 공통: '+t))}</ul>`:''}${!bad&&a[0].sc<50?'<p class="hint">지금 생활에선 이 그룹의 견종이 전반적으로 쉽지 않아요.</p>':''}<div class="rows${bad?'':' good'}">${a.map((x,j)=>row(x,j+1,!bad,sk)).join('')}</div></section>`}).join('')};
+const detail=(x,j)=>{const d=x.d;return `<article class="det"><div class="dh"><h3><span class="no">${j}</span>${d.n}<span class="size">${SIZE[d.z]}</span></h3><span class="v">${x.sc}%</span></div><p class="note">${d.note}</p>${dzl(d)}
 <div class="mt">${MET.map(([l,k])=>`<span>${l}</span><div class="s5">${[1,2,3,4,5].map(i=>`<i${i<=d[k]?' class="on"':''}></i>`).join('')}</div>`).join('')}</div>
 <ul class="pc">${li('p',x.pros)}${li('c',x.cons.slice(0,2).concat(d.warn))}</ul></article>`};
 
 function rPage(){const R=results(),T=type(),i=S.ri;let h='';
 if(i===0)h=`<div class="alert"><div class="eyebrow">경고 · 지금의 생활 기준</div><h2>${T.join('')}인 당신이<br>절대 키우면 안 되는 견종</h2></div><p class="hint">아이들의 잘못이 아니에요. 지금의 생활과 맞지 않을 뿐이에요. 크기별로 3마리씩 골랐어요.</p>${group(R,1)}<p class="hint">그렇다면 나와 맞는 아이는 누구일까요? 다음 장에서 만나요.</p>`;
 else if(i===1)h=`<div class="tag"><span class="t">${T.join('')}</span><span class="kw">${T.map(c=>`<span>${KW[c]}</span>`).join('')}</span></div><h2>나와 잘 맞는 견종</h2>
- <div class="chips">${QS.slice(4).map(q=>`<span>${q.o.find(o=>o[0]===S.st[q.k])[3]}</span>`).join('')}</div>${group(R,0)}<p class="hint">크기별로 자세히 보려면 다음 장으로 넘겨 주세요.</p>`;
-else if(i<=4){const z=i-1;h=`<div class="eyebrow">잘 맞는 견종 · ${SIZE[z]}견 ${SZ[z]}</div><h2>${SIZE[z]}견 TOP 3 자세히</h2><p class="hint">유전·호발 질환은 그 견종에서 상대적으로 잘 나타나는 질환이에요. 모든 아이에게 생기는 건 아니에요.</p><div>${pick(R,z,0).map((x,j)=>detail(x,j+1)).join('')}</div>`}
+ <div class="chips">${QS.slice(4).map(q=>`<span>${q.o.find(o=>o[0]===S.st[q.k])[3]}</span>`).join('')}</div>${group(R,0)}<p class="hint">한 마리씩 자세히 보려면 다음 장으로 넘겨 주세요.</p>`;
+else if(i<=4){const t=i-2,L=tiers(R)[t];h=`<div class="eyebrow">잘 맞는 견종 · ${TIER[t][1]}</div><h2>${TIER[t][0]} ${L.length}마리 자세히</h2><p class="hint">유전·호발 질환은 그 견종에서 상대적으로 잘 나타나는 질환이에요. 모든 아이에게 생기는 건 아니에요.</p><div>${L.map((x,j)=>detail(x,j+1)).join('')}</div>`}
 else h=`<div class="eyebrow">입양 전 약속</div><h2>평생을 약속하기 전에, 마지막으로 물어봐요</h2>
  <ul class="chk"><li>15년 남짓한 이 아이의 일생을 끝까지 함께할 수 있나요?</li><li>사료와 병원, 미용까지 매달 드는 비용을 감당할 수 있나요?</li><li>이사, 결혼, 출산, 이직으로 삶이 바뀌어도 이 아이의 자리는 그대로인가요?</li><li>생후 2개월이 지나면 동물등록을 꼭 해 주세요.</li></ul>
  <div><h3 style="margin-bottom:4px">사지 말고, 먼저 만나 주세요</h3><p class="hint">보호소에도 이 목록 속 견종과 세상에 하나뿐인 믹스견들이 가족을 기다리고 있어요. <a href="https://www.animal.go.kr" target="_blank" rel="noopener">국가동물보호정보시스템</a>, <a href="https://pawinhand.kr" target="_blank" rel="noopener">포인핸드</a>에서 만날 수 있어요.</p></div>
