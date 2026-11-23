@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>바로스캔</title>
-<meta name="theme-color" content="#0e6b58">
+<meta name="theme-color" content="#1c2a4a">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <style>
 /* 레이아웃: 상단 바 + 한 열 콘텐츠 + 하단 고정 액션 바 (한 손 조작) */
-:root{--bg:#eef1ee;--surface:#fff;--fg:#17211e;--muted:#5b6964;--line:#d3dbd6;--accent:#0e6b58;--accent-fg:#fff;--chip:#e2eae6;--shade:rgba(10,20,16,.5)}
-@media (prefers-color-scheme:dark){:root{--bg:#0e1412;--surface:#17201d;--fg:#e4ebe8;--muted:#98a7a1;--line:#2a3733;--accent:#3cc29a;--accent-fg:#062019;--chip:#21302b;--shade:rgba(0,0,0,.6);color-scheme:dark}}
+:root{--bg:#eceef2;--surface:#f8f9fb;--fg:#141d33;--muted:#5d6577;--line:#cfd4de;--accent:#1c2a4a;--accent-fg:#fff;--chip:#dfe3ea;--point:#e0a030;--point-fg:#1c1606;--shade:rgba(12,18,32,.55)}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1424;--surface:#161e31;--fg:#e3e7ef;--muted:#98a1b3;--line:#2a3449;--accent:#3a4f7d;--accent-fg:#fff;--chip:#1e2840;--point:#f0b444;--point-fg:#1c1606;--shade:rgba(0,0,0,.6);color-scheme:dark}}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Noto Sans KR","Apple SD Gothic Neo",sans-serif;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
@@ -37,7 +37,7 @@ main{max-width:720px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-rig
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px}
 .pg{position:relative;padding:0;border:1px solid var(--line);background:#fff;border-radius:8px;overflow:hidden;aspect-ratio:210/297}
 .pg img{width:100%;height:100%;object-fit:contain;display:block}
-.pg span{position:absolute;left:6px;bottom:6px;font-size:12px;font-weight:700;line-height:1;background:var(--accent);color:var(--accent-fg);padding:5px 8px;border-radius:99px;font-variant-numeric:tabular-nums}
+.pg span{position:absolute;left:6px;bottom:6px;font-size:12px;font-weight:700;line-height:1;background:var(--point);color:var(--point-fg);padding:5px 8px;border-radius:99px;font-variant-numeric:tabular-nums}
 .panel{margin-top:18px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);display:grid;gap:10px}
 .field{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
 .field input,.field select,.field textarea{width:100%;min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:16px}
@@ -51,7 +51,7 @@ main{max-width:720px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-rig
 #prevImg{max-width:100%;max-height:60vh;display:block}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px}
 .chip{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);border-radius:99px;min-height:38px;padding:0 14px;font-weight:600}
-.chip.on{background:var(--accent);color:var(--accent-fg);border-color:transparent}
+.chip.on{background:var(--point);color:var(--point-fg);border-color:transparent}
 .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .sides{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .side{display:grid;gap:8px;min-width:0}
@@ -62,7 +62,7 @@ main{max-width:720px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-rig
 .side .row .btn{min-height:40px;font-size:14px}
 .status{margin:14px 0 0;padding:10px 12px;border-radius:10px;background:var(--chip);font-size:14px}
 .chk{display:flex;align-items:center;gap:8px;font-size:14px}
-.chk input{width:20px;height:20px;accent-color:var(--accent)}
+.chk input{width:20px;height:20px;accent-color:var(--point)}
 details{margin-top:12px;color:var(--muted);font-size:13px}
 pre{white-space:pre-wrap;word-break:break-all;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0 0}
 #toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;transition:.25s;z-index:20;background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;width:max-content;max-width:calc(100% - 32px);pointer-events:none}
@@ -357,7 +357,7 @@ $('#imgShare').onclick=async()=>{const files=doc.map((it,i)=>new File([it.blob],
 
 /* ---------- 편집기 ---------- */
 let ed=null;
-const accent=()=>getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+const accent=()=>getComputedStyle(document.documentElement).getPropertyValue('--point').trim();
 async function openEditor(it,list){
   busy('불러오는 중…');let src;try{src=await decode(it.file)}finally{busy()}
   ed={it,list,src,q:it.quad.map(p=>[...p]),rot:it.rot,filter:it.filter,del:false,active:null};
