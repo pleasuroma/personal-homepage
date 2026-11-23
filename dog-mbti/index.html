@@ -466,7 +466,7 @@ function step(dir){
   if(S.mode==='q'){
     if(dir<0){if(S.qi)S.qi--;else S.mode='intro'}
     else if(S.qi<QS.length-1)S.qi++;
-    else{R=null;S.mode='load';view(1);setTimeout(()=>{S.mode='r';S.ri=0;view(1)},1600);return}
+    else{R=null;S.mode='load';view(1);setTimeout(()=>{S.mode='r';S.ri=0;view(1)},2500);return}
   }else if(S.mode==='r'){const k=S.ri+dir;if(k<0||k>=RL.length)return;S.ri=k}else return;
   view(dir);
 }
