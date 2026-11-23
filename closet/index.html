@@ -131,7 +131,7 @@ select.in{padding:7px 8px}
 <body>
 <div class="wrap">
   <header>
-    <div><div class="eyebrow" id="eyebrow">MY CLOSET</div><h1>나만의 옷장</h1><div class="sign">by J.Park Lab</div></div>
+    <div><div class="eyebrow" id="eyebrow">MY CLOSET</div><h1>나만의 옷장</h1><div class="sign">by J.Park Lab · v5</div></div>
     <div class="stats"><div class="mono" id="stats"></div><div id="conn">연결 중…</div><button class="chip ghost" data-act="ai-open" id="ai-btn" hidden>AI 설정</button></div>
   </header>
   <nav class="tabs" role="tablist">
@@ -330,7 +330,7 @@ const CQ=[];let CR=null,box=null,drag=null;
 async function nextCrop(){if(CR){URL.revokeObjectURL(CR.url);CR=null}
   const f=CQ.shift();if(!f){if($("#crop").open)$("#crop").close();return}
   const url=URL.createObjectURL(f),im=new Image();
-  try{await new Promise((ok,no)=>{im.onload=ok;im.onerror=no;im.src=url})}catch{URL.revokeObjectURL(url);queueFiles([f]);return nextCrop()}
+  try{await new Promise((ok,no)=>{im.onload=ok;im.onerror=no;im.src=url})}catch{URL.revokeObjectURL(url);toast("이 사진은 자르기 화면을 열 수 없어 그대로 올렸어요.");queueFiles([f]);return nextCrop()}
   CR={file:f,img:im,url,cut:0};drawCrop()}
 function drawCrop(){const left=CQ.length;
   $("#crop").innerHTML=`<div class="edhead"><b>옷만 골라 자르기</b><span class="sub">${CR.cut?`이 사진에서 ${CR.cut}벌 잘랐어요 · `:""}남은 사진 ${left}장</span></div>
@@ -633,7 +633,8 @@ useCap("sample",15000).then(async s=>{if(!s&&!window.claude?.use){const k=getKey
     else if(/Android/i.test(UA))location.href='intent://'+u.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;end';};
   if(inApp){$('#inApp').hidden=false;$('#openExt').onclick=ext;
     let first=true;try{first=!sessionStorage.getItem('extTried');sessionStorage.setItem('extTried','1')}catch(e){}if(kakao&&first)ext()}}
-if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js');
+// 새 버전이 배포되면 새 서비스 워커가 자리를 잡는 즉시 한 번 새로고침해 최신 화면을 보여 줘요.
+if('serviceWorker'in navigator&&location.protocol==='https:'){const had=!!navigator.serviceWorker.controller;navigator.serviceWorker.register('sw.js',{updateViaCache:'none'});navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)location.reload()})}
 </script>
 </body>
 </html>
