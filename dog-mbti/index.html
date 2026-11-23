@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="MBTI와 생활 조건 11문항으로 절대 키우면 안 되는 견종과 잘 맞는 견종을 찾아요.">
+<meta name="theme-color" content="#0b1311">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="견종 매칭">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:title" content="MBTI 견종 매칭">
+<meta property="og:description" content="당신이 절대 키우면 안 되는 강아지, 그리고 나와 맞는 강아지">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>MBTI 견종 매칭</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: 한 화면에 한 장씩 넘기는 카드 덱 (시작 → 11문항 → 분석 → 결과 6장) */
+:root{--bg:#0b1311;--surface:#111b18;--ink:#ede6d8;--muted:#9aa49d;--line:#24322d;--teal:#a9c4b4;--gold2:#cfdfd4;--brass:#a9c4b4;--brass-ink:#10201a;--warn:#e0957a;--green:#163029;
+--disp:"Noto Serif KR","Nanum Myeongjo",serif;--body:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--body)}
+.wrap{max-width:600px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--disp);font-weight:400;margin:0;text-wrap:balance;line-height:1.25}
+h1{font-size:clamp(30px,7vw,42px)}h2{font-size:clamp(24px,5.5vw,30px)}h3{font-size:18px}
+.hd{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted)}
+.brand{font-family:var(--disp);font-size:17px;color:var(--ink)}
+.step{font-variant-numeric:tabular-nums}
+.prog{height:4px;background:var(--line);border-radius:2px;margin:10px 0 20px;overflow:hidden}.prog b{display:block;height:100%;background:var(--teal);transition:width .3s}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:18px;min-height:min(600px,80vh);display:flex;overflow:hidden;touch-action:pan-y}
+.pg{flex:1;display:flex;flex-direction:column;gap:18px;padding:28px 24px 20px;min-width:0;animation:in .32s ease both}
+.pg.l{animation-name:inl}
+@keyframes in{from{opacity:.3;transform:translateX(32px)}}@keyframes inl{from{opacity:.3;transform:translateX(-32px)}}
+@media (prefers-reduced-motion:reduce){.pg{animation:none}.prog b{transition:none}}
+.grow{flex:1}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--teal);font-weight:700}
+.lead,.hint{color:var(--muted);margin:0}.hint{font-size:13px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:16px 18px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}
+.opt b{font-family:var(--disp);font-weight:400;font-size:34px;line-height:1;color:var(--teal);width:1.1em;text-align:center}
+.opt strong{display:block;font-size:16px}.opt small{display:block;color:var(--muted);font-size:13px}
+.opt:hover{border-color:var(--teal)}
+.opt[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+.opt[aria-pressed="true"] b,.opt[aria-pressed="true"] small{color:var(--surface)}
+button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:14px}
+.ghost{font:inherit;font-weight:700;font-size:14px;background:none;border:1px solid var(--line);color:var(--ink);border-radius:99px;padding:8px 16px;cursor:pointer}
+.ghost:disabled{opacity:.35;cursor:default}
+.cta{font:inherit;font-family:var(--disp);font-size:20px;background:var(--teal);color:var(--surface);border:0;border-radius:99px;padding:14px 28px;cursor:pointer;align-self:flex-start}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dots button{width:8px;height:8px;padding:0;border:0;border-radius:50%;background:var(--line);cursor:pointer}.dots button[aria-current="true"]{background:var(--teal);width:20px;border-radius:4px}
+.facts{display:flex;gap:24px}.facts span{color:var(--muted);font-size:13px}.facts b{font-family:var(--disp);font-weight:400;font-size:28px;color:var(--ink);margin-right:2px}
+.tag{position:relative;background:var(--brass);color:var(--brass-ink);border-radius:20px 60px 60px 20px;padding:18px 28px 18px 58px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
+.tag::before{content:"";position:absolute;left:20px;top:50%;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:var(--surface);box-shadow:inset 0 0 0 3px rgba(0,0,0,.15)}
+.tag .t{font-family:var(--disp);font-size:46px;letter-spacing:.06em;line-height:1}
+.tag .kw{display:flex;flex-wrap:wrap;gap:6px}.tag .kw span{font-size:13px;font-weight:700;border:1.5px solid currentColor;border-radius:99px;padding:2px 10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips span{font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:3px 10px;color:var(--muted)}
+.teaser{background:var(--bg);border-radius:14px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.teaser b{font-family:var(--disp);font-weight:400;font-size:24px}.teaser em{font-style:normal;font-family:var(--disp);font-size:24px;color:var(--teal)}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}
+.size{font-family:var(--body);font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-left:8px;vertical-align:5px;color:var(--muted)}
+.note{margin:4px 0 0;color:var(--muted)}
+.ring{--v:0;width:92px;height:92px;border-radius:50%;background:conic-gradient(var(--teal) calc(var(--v)*1%),var(--line) 0);display:grid;place-items:center}
+.ring span{width:74px;height:74px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-family:var(--disp);font-size:28px;color:var(--teal);font-variant-numeric:tabular-nums}.ring small{font-size:14px}
+.avoid .ring{background:conic-gradient(var(--warn) calc(var(--v)*1%),var(--line) 0)}.avoid .ring span{color:var(--warn)}
+.mt{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:8px 12px;align-items:center;font-size:12.5px;color:var(--muted)}
+@media (max-width:460px){.mt{grid-template-columns:auto 1fr}}
+.s5{display:flex;gap:3px}.s5 i{flex:1;height:7px;border-radius:2px;background:var(--line)}.s5 i.on{background:var(--teal)}
+ul.pc{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:14px}
+ul.pc li{padding-left:20px;position:relative}ul.pc li::before{position:absolute;left:0;font-weight:700}
+li.p::before{content:"+";color:var(--teal)}li.c::before{content:"!";color:var(--warn);left:4px}
+.rows{display:grid}.rows>div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:14px 0;border-top:1px solid var(--line)}
+.rows h3 small{font-family:var(--body);font-size:12px;color:var(--muted);margin-left:6px}
+.rows .v{font-family:var(--disp);font-size:24px;color:var(--warn)}.rows ul{grid-column:1/-1}
+.scroll{overflow:auto;max-height:min(440px,56vh);border-top:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{position:sticky;top:0;background:var(--surface);font-size:12px;color:var(--muted);font-weight:500}
+.bar{height:6px;border-radius:3px;background:var(--line);min-width:70px}.bar b{display:block;height:100%;border-radius:3px;background:var(--teal)}
+.chk{margin:0;padding-left:20px;display:grid;gap:4px}
+a{color:var(--teal)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.load{flex:1;display:grid;place-content:center;justify-items:center;text-align:center;gap:16px}
+.spin{width:44px;height:44px;border:4px solid var(--line);border-top-color:var(--teal);border-radius:50%;animation:sp .9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.alert{background:var(--warn);color:var(--surface);border-radius:14px;padding:18px 20px}.alert .eyebrow{color:inherit;opacity:.85;margin-bottom:4px}
+.no{font-family:var(--disp);font-weight:400;color:var(--muted);margin-right:8px}.good .v{color:var(--teal)}
+body{word-break:keep-all;overflow-wrap:break-word}
+.grp{display:grid;gap:2px}.gh{font-size:18px;display:flex;align-items:baseline;gap:8px;margin-top:8px}.gh small{font-family:var(--body);font-size:12px;color:var(--muted)}
+.det{display:grid;gap:8px;padding:16px 0;border-top:1px solid var(--line)}.dh{display:flex;justify-content:space-between;align-items:baseline;gap:12px}.dh .v{font-family:var(--disp);font-size:24px;color:var(--teal)}
+.com{background:var(--bg);border-radius:12px;padding:12px 16px;display:grid;gap:6px}
+
+/* 고급형 리디자인: 딥 그린 + 세이지, 순차 등장 애니메이션 */
+body{background:radial-gradient(120% 60% at 50% -10%,#1d3a31 0%,var(--bg) 60%) fixed,var(--bg);color:var(--ink)}
+h1,h2,h3{font-weight:700;letter-spacing:-.01em}h1{font-size:clamp(28px,7vw,40px);line-height:1.3}
+.brand{font-family:var(--disp);font-weight:700;letter-spacing:.02em}
+.prog b{background:linear-gradient(90deg,#5f7f70,var(--gold2))}
+.stage{background:linear-gradient(180deg,#14211d,var(--surface));border-color:#2b3c35;box-shadow:0 30px 60px -30px rgba(0,0,0,.7),inset 0 1px 0 rgba(207,223,212,.08)}
+.eyebrow{color:var(--gold2);letter-spacing:.14em}
+.tag{background:linear-gradient(135deg,#dfe8e2,#9fb8a9 60%,#c3d4c9);color:var(--brass-ink);border-radius:16px 48px 48px 16px;padding:16px 24px 16px 52px;box-shadow:0 12px 30px -12px rgba(150,180,163,.5);overflow:hidden}
+.tag::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.3) 50%,transparent 70%);transform:translateX(-100%);animation:shine 4s ease-in-out 1s infinite}
+.tag::before{background:var(--surface)}.tag .t{font-family:var(--disp);font-weight:900;font-size:40px}
+.kw.sub{font-size:13px;font-weight:700;opacity:.8}
+.facts b{font-family:var(--disp);font-weight:700;color:var(--gold2)}
+.cta{font-family:var(--disp);font-weight:700;background:linear-gradient(135deg,#e3ebe5,#a7bfb0);color:var(--brass-ink);position:relative;overflow:hidden;box-shadow:0 10px 30px -10px rgba(150,180,163,.7);transition:transform .15s}
+.cta:active{transform:scale(.97)}
+.cta.big{align-self:stretch;display:flex;justify-content:center;align-items:center;gap:12px;font-size:20px;padding:18px 24px;animation:pulse 2.4s ease-in-out 1.2s infinite}
+.cta.big i{font-style:normal;transition:transform .2s;animation:nudge 1.6s ease-in-out infinite}
+.cta.big::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.35) 50%,transparent 65%);transform:translateX(-100%);animation:shine 3s ease-in-out .8s infinite}
+.tap{margin:-8px 0 0;text-align:center;font-size:12.5px;color:var(--muted)}
+.opt{background:rgba(255,255,255,.02);border-color:#2b3c35;transition:border-color .2s,background .2s,transform .15s}
+.opt:hover{border-color:var(--brass)}.opt:active{transform:scale(.98)}
+.opt b{font-family:var(--disp);font-weight:900;color:var(--gold2)}
+.opt[aria-pressed="true"]{background:linear-gradient(135deg,#dfe8e2,#a7bfb0);border-color:transparent;color:var(--brass-ink)}
+.opt[aria-pressed="true"] b,.opt[aria-pressed="true"] small{color:var(--brass-ink)}
+.ghost{border-color:#33453e}.dots button[aria-current="true"]{background:var(--gold2)}
+.alert{background:linear-gradient(135deg,#5a2418,#8c3b26);color:#f6e3d8;border:1px solid rgba(224,149,122,.35)}
+.com{background:rgba(255,255,255,.03);border:1px solid var(--line)}
+.chips span{background:rgba(255,255,255,.03)}
+.good .v,.dh .v{color:var(--gold2)}.v{font-family:var(--disp);font-weight:900}
+.s5 i.on{background:linear-gradient(90deg,#9fb8a9,var(--gold2))}
+.spin{border-top-color:var(--gold2)}
+.pg>*{animation:up .55s cubic-bezier(.2,.7,.2,1) both}
+.pg>:nth-child(2){animation-delay:.06s}.pg>:nth-child(3){animation-delay:.12s}.pg>:nth-child(4){animation-delay:.18s}.pg>:nth-child(5){animation-delay:.24s}.pg>:nth-child(6){animation-delay:.3s}.pg>:nth-child(n+7){animation-delay:.36s}
+.opt,.rows>div,.det,.grp>.pc{animation:up .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(.15s + var(--i,0)*70ms)}
+@keyframes up{from{opacity:.05;transform:translateY(14px)}}
+@keyframes shine{0%{transform:translateX(-100%)}40%,100%{transform:translateX(100%)}}
+@keyframes pulse{0%,100%{box-shadow:0 10px 30px -10px rgba(150,180,163,.7),0 0 0 0 rgba(207,223,212,.45)}50%{box-shadow:0 10px 30px -10px rgba(150,180,163,.7),0 0 0 10px rgba(207,223,212,0)}}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){.pg>*,.opt,.rows>div,.det,.grp>.pc,.cta.big,.cta.big i,.cta.big::after,.tag::after{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hd"><span class="brand">MBTI 견종 매칭</span><span class="step" id="step"></span></header>
+  <div class="prog"><b id="bar"></b></div>
+  <main class="stage" id="stage"></main>
+</div>
+
+<script>
+// 이름|크기(1소 2중 3대)|운동량|애착(외로움)|사교성|독립성|훈련성|털관리|털빠짐|짖음|아이친화|호기심 (1~5)|특징|주의
+const B=`말티즈|1|3|5|3|1|3|4|1|4|2|3|사람 곁을 좋아하는 애교쟁이|분리불안과 짖음 관리가 필요해요
+토이 푸들|1|3|4|3|2|5|5|1|3|3|5|영리하고 털이 거의 안 빠져요|4~6주마다 미용이 필요해요
+포메라니안|1|3|4|2|2|3|4|3|5|2|4|작지만 당당한 경계견|짖음이 많고 털도 많이 빠져요
+치와와|1|3|5|1|2|2|1|2|4|1|3|한 사람에게 깊이 애착해요|낯을 가리고 예민해 어린아이와는 주의가 필요해요
+시츄|1|2|4|4|3|3|4|1|2|4|2|느긋하고 온순한 집순이|눈·피부 관리, 배변훈련에 인내가 필요해요
+비숑 프리제|1|3|5|5|1|3|5|1|3|4|4|밝고 사교적인 솜뭉치|미용비가 들고 혼자 있는 걸 힘들어해요
+요크셔 테리어|1|3|4|2|3|3|4|1|4|2|4|용감하고 호기심 많은 테리어|짖음과 고집이 있어요
+진돗개|2|4|3|1|5|2|2|5|2|2|2|한 가족에게 충성하는 독립파|낯선 사람·개를 경계하고 털갈이가 심해요
+웰시 코기|2|4|4|4|2|4|2|5|4|4|4|명랑하고 똑똑한 목양견|털 빠짐이 많고 비만·허리 관리가 필요해요
+골든 리트리버|3|4|5|5|1|5|3|5|2|5|4|다정한 가족견의 대표|운동량과 털 빠짐이 모두 많아요
+래브라도 리트리버|3|5|4|5|2|5|1|4|2|5|4|에너지 넘치는 모범생|어릴 때 물건을 많이 망가뜨려요
+시바견|2|3|2|2|5|2|2|5|2|2|3|깔끔하고 독립적인 성격|고집이 세고 털갈이가 심해요
+닥스훈트|1|3|4|3|3|2|1|2|5|3|4|용감한 사냥개 출신|허리 디스크에 취약하고 짖음이 많아요
+프렌치 불독|1|2|5|4|2|3|1|3|1|4|3|조용하고 익살맞은 동반자|더위와 호흡기 질환에 약해요
+비글|2|5|3|5|3|2|1|3|5|5|5|에너지와 호기심이 넘쳐요|하울링·고집이 있고 운동량이 매우 많아요
+보더 콜리|2|5|3|3|2|5|3|4|3|3|5|가장 영리한 견종으로 꼽혀요|매일 고강도 운동과 두뇌 놀이가 필수예요
+미니어처 슈나우저|1|3|4|3|2|4|4|1|4|4|4|영리하고 씩씩한 테리어|짖음이 있고 정기 미용이 필요해요
+재패니즈 스피츠|1|3|4|3|2|4|3|4|3|4|3|명랑한 흰 털 반려견|털 빠짐이 많고 경계할 때 짖는 아이도 있어요
+사모예드|3|4|5|5|1|3|5|5|4|5|4|늘 웃는 얼굴의 친화왕|털 관리가 엄청나고 더위에 약해요
+시베리안 허스키|3|5|3|5|3|1|3|5|3|4|5|자유로운 썰매견|탈출·하울링, 많은 운동량. 초보에겐 버거워요
+퍼그|1|2|5|5|2|2|1|4|2|5|3|느긋한 분위기 메이커|호흡기 질환이 잦고 의외로 털이 많이 빠져요
+페키니즈|1|1|3|2|4|1|4|3|3|2|2|도도한 실내견|고집이 세고 눈·호흡기 관리가 필요해요
+파피용|1|4|4|4|2|5|2|2|3|3|5|나비 귀의 영리한 소형견|체구가 작아 낙상·골절에 주의해요
+미니어처 핀셔|1|4|3|2|3|2|1|2|4|2|5|작은 몸에 큰 에너지|짖음과 탈출 시도가 있고 추위에 약해요
+이탈리안 그레이하운드|1|3|5|3|2|2|1|1|1|3|3|조용하고 우아한 껌딱지|골절과 추위에 약하고 분리불안이 있어요
+셔틀랜드 쉽독|2|4|4|2|2|5|4|5|5|4|4|섬세하고 영리한 목양견|짖음이 많고 털 관리가 많이 필요해요
+잭 러셀 테리어|1|5|3|3|3|2|1|3|4|3|5|지칠 줄 모르는 사냥꾼|에너지가 매우 높고 땅을 파요
+보스턴 테리어|1|3|4|5|2|4|1|2|2|5|4|밝고 친화적인 신사견|더위와 호흡기에 약해요
+아메리칸 코커 스패니얼|2|3|4|4|2|3|4|3|3|3|3|다정한 큰 눈의 스패니얼|귀 염증이 잦고 미용이 필요해요
+카발리에 킹 찰스 스패니얼|1|2|5|5|1|4|3|3|2|5|3|누구와도 잘 지내는 순둥이|유전성 심장병과 분리불안에 주의해요
+베들링턴 테리어|2|3|4|3|3|3|4|1|2|4|3|어린 양 같은 외모의 날쌘 테리어|정기 미용이 필요하고 사냥 본능이 있어요
+웨스트 하이랜드 화이트 테리어|1|3|3|4|4|2|3|2|4|4|4|자신감 넘치는 하얀 테리어|피부 질환이 잦고 고집이 있어요
+스탠다드 푸들|3|4|4|4|2|5|5|1|2|5|5|우아하고 영리한 대형견|미용비와 운동량을 함께 챙겨야 해요
+말티푸|1|3|5|4|1|4|4|1|3|4|4|말티즈와 푸들의 믹스|개체차가 크고 분리불안이 있을 수 있어요
+꼬똥 드 툴레아|1|2|5|4|2|4|4|1|2|5|3|온화한 솜뭉치|털 엉킴 관리가 필요해요
+라사 압소|1|2|3|1|4|2|5|1|4|2|2|경계심 있는 티베트 파수견|고집이 세고 털 관리가 많아요
+재패니즈 친|1|2|4|3|4|3|3|3|1|3|3|조용하고 고양이 같은 성격|호흡기와 더위에 약해요
+삽살개|2|3|4|2|3|3|4|2|2|4|3|복을 부른다는 토종 장모견|털 관리와 충분한 공간이 필요해요
+풍산개|3|4|3|1|5|2|2|4|2|2|2|용맹한 북방 토종견|경계심이 강하고 넓은 공간이 필요해요
+저먼 셰퍼드|3|5|4|2|2|5|2|5|3|4|4|충성스러운 만능 작업견|운동·훈련이 필수이고 털이 많이 빠져요
+도베르만|3|5|4|2|2|5|1|2|3|3|4|우아하고 믿음직한 보호견|꾸준한 훈련과 사회화가 꼭 필요해요
+그레이트 피레니즈|3|2|3|2|5|1|3|5|4|5|1|온화한 거대 수호견|밤에 짖고 털이 많으며 넓은 공간이 필요해요
+버니즈 마운틴 독|3|3|5|4|1|4|3|5|2|5|3|순하고 다정한 거인|수명이 짧은 편이고 더위·털 관리가 필요해요
+알래스칸 말라뮤트|3|5|3|4|4|1|3|5|3|4|4|힘센 썰매견|털갈이가 심하고 더위에 약하며 힘이 세요
+차우차우|2|1|2|1|5|1|4|4|1|1|1|고고한 사자견|경계심과 고집이 강하고 피부 관리가 필요해요
+잉글리시 불독|2|1|4|4|3|2|1|3|1|4|2|느긋한 소파 메이트|호흡기·피부 질환이 잦아 의료비가 많이 들어요
+오스트레일리안 셰퍼드|2|5|4|3|2|5|3|4|3|4|5|활동적인 만능 목양견|매일 고강도 운동이 필요해요
+휘핏|2|3|4|3|3|3|1|2|1|4|2|실내에선 조용한 단거리 선수|추위에 약하고 작은 동물을 쫓아요
+아메리칸 불리|2|3|5|4|2|3|1|2|1|4|3|듬직하지만 다정한 근육견|힘이 세서 사회화와 리드줄 훈련이 중요해요
+실키 테리어|1|4|3|3|3|2|4|1|4|2|4|활발한 실크 털 테리어|짖음과 고집이 있어요
+미니어처 푸들|1|4|4|4|2|5|5|1|3|4|5|토이보다 튼튼하고 활발한 푸들|정기 미용과 두뇌 놀이가 필요해요
+하바니즈|1|3|5|5|1|4|4|1|3|5|4|명랑하고 사람을 잘 따르는 소형견|혼자 있는 걸 힘들어하고 털 엉킴 관리가 필요해요
+브뤼셀 그리폰|1|3|5|3|2|3|2|2|3|2|4|사람 같은 표정의 작은 수염쟁이|예민한 편이라 어린아이와는 주의가 필요해요
+보더 테리어|1|4|4|4|2|4|2|2|2|4|4|테리어 중 순한 편인 활동가|운동량이 많고 사냥 본능이 있어요
+케언 테리어|1|4|3|4|3|3|2|2|4|4|4|씩씩하고 소탈한 작은 테리어|땅파기와 짖음이 있어요
+스코티시 테리어|1|3|3|2|4|2|3|2|3|2|3|위엄 있는 고집쟁이 신사|고집이 세고 낯선 사람에게 무심해요
+와이어 폭스 테리어|1|5|3|4|3|2|3|2|4|3|5|에너지 넘치는 장난꾸러기|활동량이 매우 많고 작은 동물을 쫓아요
+에어데일 테리어|3|4|3|3|3|3|3|2|3|4|5|테리어의 왕이라 불리는 대형 테리어|고집이 있어 꾸준한 훈련이 필요해요
+불테리어|2|4|4|4|3|2|1|3|2|3|5|달걀형 얼굴의 익살꾼|고집이 세고 사회화가 중요해요
+스태퍼드셔 불테리어|2|4|5|4|2|3|1|2|2|5|4|사람을 매우 좋아하는 근육질 개|다른 개와 지내려면 사회화가 꼭 필요해요
+아키타|3|3|3|1|5|2|3|5|1|2|2|조용하고 위엄 있는 대형견|경계심이 강해 다른 개와 마찰이 생길 수 있어요
+경주개 동경이|2|3|3|2|4|3|1|4|2|3|3|꼬리가 짧은 토종견, 천연기념물|낯선 사람을 경계하고 털갈이가 있어요
+샤페이|2|2|2|1|5|2|1|2|2|2|2|주름진 얼굴의 독립적인 경비견|피부·눈 질환이 잦고 경계심이 강해요
+바셋 하운드|2|2|4|5|3|1|1|4|5|5|3|느긋하고 다정한 긴 귀 하운드|하울링이 크고 고집이 있으며 침을 흘려요
+바센지|2|4|3|2|5|1|1|1|1|3|5|짖지 않고 요들 같은 소리를 내요|고집이 세고 탈출을 잘해요
+달마시안|3|5|4|3|3|3|1|5|3|3|4|점박이 무늬의 지구력 강한 개|운동량이 많고 털이 생각보다 많이 빠져요
+와이마라너|3|5|5|4|1|4|1|3|3|4|4|은빛 털의 에너지 넘치는 사냥개|분리불안과 많은 운동량에 주의해요
+비즐라|2|5|5|4|1|4|1|2|2|4|4|보호자 곁을 떠나지 않는 껌딱지|혼자 두면 힘들어하고 운동량이 많아요
+잉글리시 코커 스패니얼|2|4|4|4|2|4|3|3|3|4|4|명랑하고 순한 사냥개 출신|귀 관리와 털 정리가 필요해요
+잉글리시 스프링어 스패니얼|2|5|4|5|2|4|3|3|3|5|4|지칠 줄 모르는 다정한 친구|운동량이 많고 혼자 있는 걸 싫어해요
+로트와일러|3|4|4|2|3|4|1|3|2|3|3|충성스럽고 침착한 보호견|힘이 매우 세서 전문적인 훈련이 필요해요
+그레이트 데인|3|3|4|4|2|4|1|3|2|4|2|온순한 초대형 신사|수명이 짧고 사료비·공간 부담이 커요
+세인트 버나드|3|2|4|4|2|3|3|5|2|5|2|침착하고 인내심 많은 구조견|침과 털이 많고 더위에 약해요
+뉴펀들랜드|3|2|5|5|1|4|4|5|1|5|2|아이를 잘 돌보는 거대한 유모견|털과 침이 많고 넓은 공간이 필요해요
+케인 코르소|3|4|3|1|4|3|1|3|2|3|3|강인한 이탈리아 보호견|경계심이 강해 경험 많은 보호자에게 맞아요
+벨지안 말리노이즈|3|5|4|2|2|5|2|4|3|3|5|군견·경찰견으로 활약하는 작업견|일거리가 없으면 문제 행동이 생겨요
+러프 콜리|3|3|4|4|2|5|4|5|4|5|3|온화하고 영리한 장모 목양견|털 관리가 많고 짖음이 있어요
+올드 잉글리시 쉽독|3|3|4|4|2|3|5|4|3|5|3|복슬복슬한 털의 유쾌한 목양견|털 관리가 매우 많이 필요해요
+아프간 하운드|3|3|2|2|5|1|5|2|1|2|2|긴 비단 털의 우아한 하운드|고집이 세고 털 관리가 매우 많아요
+보르조이|3|3|3|3|4|2|3|3|1|3|2|조용하고 우아한 러시아 하운드|작은 동물을 쫓고 넓은 운동 공간이 필요해요
+그레이하운드|3|2|3|3|3|3|1|2|1|4|2|실내에선 소파를 좋아하는 경주견|추위에 약하고 작은 동물을 쫓아요
+화이트 스위스 셰퍼드|3|4|4|3|2|5|3|5|3|4|4|흰 털의 온순한 셰퍼드|털 빠짐과 운동량이 많아요
+골든두들|3|4|5|5|1|5|4|2|2|5|4|골든 리트리버와 푸들의 믹스|개체차가 크고 털 엉킴 관리가 필요해요
+래브라두들|3|4|5|5|1|4|4|2|2|5|4|래브라도와 푸들의 믹스|에너지가 많고 개체차가 커요
+아펜핀셔|1|3|3|2|4|2|3|2|3|2|4|원숭이 같은 얼굴의 당돌한 소형견|고집이 있고 어린아이와는 주의가 필요해요
+차이니즈 크레스티드|1|2|5|3|2|3|3|1|2|3|3|털이 거의 없는 독특한 외모|피부와 체온 관리가 필요해요
+저먼 스피츠|1|3|4|3|2|3|4|4|5|3|4|포메라니안의 큰 형님뻘 스피츠|짖음이 많고 털갈이가 있어요
+키스혼드|2|3|5|4|2|4|4|5|4|5|3|웃는 표정의 네덜란드 운하견|털이 많이 빠지고 혼자 있는 걸 싫어해요
+랫 테리어|1|4|4|3|3|3|1|3|3|4|5|영리하고 활발한 소형 사냥개|땅파기와 탈출에 주의해요
+웰시 코기 카디건|2|4|4|3|3|4|2|5|4|4|4|꼬리 있는 코기, 펨브로크보다 차분해요|털이 많이 빠지고 허리 관리가 필요해요
+아메리칸 에스키모 독|2|4|4|3|2|5|4|5|4|4|4|눈처럼 하얀 영리한 스피츠|짖음과 털 빠짐이 많아요
+비어디드 콜리|2|4|4|5|2|3|5|3|3|5|5|유쾌하고 활발한 장모 목양견|털 관리와 운동량이 모두 많아요
+자이언트 슈나우저|3|5|4|2|2|4|4|2|3|3|4|듬직하고 영리한 대형 슈나우저|운동·미용·훈련이 모두 많이 필요해요
+라고토 로마뇰로|2|3|4|3|2|4|4|1|2|4|5|곱슬 털의 송로버섯 탐지견|땅파기를 좋아하고 미용이 필요해요
+미니어처 오스트레일리안 셰퍼드|2|5|4|3|2|5|3|4|3|4|5|작지만 일 욕심 많은 목양견|매일 충분한 운동과 놀이가 필요해요
+코카푸|1|3|5|5|1|4|4|1|3|5|4|코커 스패니얼과 푸들의 믹스|개체차가 크고 털 엉킴 관리가 필요해요
+스탠다드 슈나우저|2|4|4|2|2|4|4|1|4|4|4|용감하고 영리한 원조 슈나우저|짖음이 있고 미용이 필요해요
+저먼 쇼트헤어드 포인터|3|5|4|4|2|4|1|3|3|4|4|사냥개 출신의 운동광|매일 고강도 운동이 필요해요
+도고 아르헨티노|3|4|4|2|3|3|1|3|2|3|3|하얀 근육질의 대형 사냥견|힘이 세고 경계심이 있어 전문 훈련이 필요해요
+미니어처 불테리어|1|4|4|4|3|2|1|3|2|3|5|불테리어를 줄인 장난꾸러기|고집이 세고 사회화가 중요해요`.split('\n').map(l=>{const x=l.split('|'),d={n:x[0],note:x[12],warn:x[13]};[...'zeafitgsbkp'].forEach((c,j)=>d[c]=+x[j+1]);return d});
+
+// 개 친화·고양이 친화(사냥 본능 반영) 두 자리씩, B와 같은 순서
+const DC='44 44 33 23 55 55 33 11 43 55 54 22 32 44 53 33 32 44 53 51 55 34 44 32 42 44 21 44 44 55 32 32 44 55 55 34 45 33 11 33 33 34 54 21 12 34 33 42 33 32 44 55 34 42 32 22 21 22 22 22 11 22 22 54 31 33 31 42 44 43 22 44 44 55 12 22 44 44 31 31 41 43 55 54 33 44 33 54 32 33 44 54 22 43 43 55 22 41 11 22'.split(' ');
+B.forEach((d,j)=>{d.dg=+DC[j][0];d.ct=+DC[j][1]});
+const n=x=>(x-1)/4,r=x=>(5-x)/4;
+const DIM={E:d=>.6*n(d.f)+.4*n(d.e),I:d=>.5*r(d.b)+.3*r(d.e)+.2*r(d.f),S:d=>.5*r(d.g)+.5*r(d.p),N:d=>.7*n(d.p)+.3*n(d.t),T:d=>.7*n(d.i)+.3*r(d.a),F:d=>.7*n(d.a)+.3*n(d.f),J:d=>n(d.t),P:d=>.4*r(d.g)+.3*n(d.i)+.3*n(d.p)};
+const WHY={E:'사람과 친구를 반기는 아이라, 함께 걷는 길마다 새로운 인연이 생겨요',I:'조용하고 차분한 아이라, 고요한 나의 시간을 함께 지켜 줘요',S:'한결같고 손이 덜 가는 아이라, 소박한 일상에 자연스레 스며들어요',N:'호기심 가득한 아이라, 매일 새로운 놀이를 함께 꿈꿀 수 있어요',T:'스스로 설 줄 아는 아이라, 서로의 공간을 존중하며 담백하게 사랑할 수 있어요',F:'애정 표현이 풍부한 아이라, 마음을 나누는 기쁨이 매일 쌓여요',J:'배우기를 좋아하는 아이라, 함께 만든 약속과 루틴이 단단해져요',P:'적응력이 좋은 아이라, 즉흥적인 하루에도 기꺼이 함께해요'};
+const KW={E:'사교적인',I:'차분한',S:'손이 덜 가는',N:'호기심 많은',T:'독립적인',F:'애정 표현이 많은',J:'훈련이 잘 되는',P:'적응력 좋은'};
+const LAW=new Set(['로트와일러','스태퍼드셔 불테리어']);
+const SIZE=['','소형','중형','대형'];
+const QS=[
+{k:'m0',t:'쉬는 날, 주로 어떻게 에너지를 채우나요?',o:[['E','외향','사람들을 만나며 충전해요'],['I','내향','혼자 쉬며 충전해요']]},
+{k:'m1',t:'새로운 정보를 받아들일 때 나는?',o:[['S','감각','경험과 사실을 중시해요'],['N','직관','가능성과 아이디어를 중시해요']]},
+{k:'m2',t:'결정을 내릴 때 나는?',o:[['T','사고','논리와 원칙을 우선해요'],['F','감정','사람과 관계를 우선해요']]},
+{k:'m3',t:'하루를 보내는 방식은?',o:[['J','판단','계획을 세우고 따르는 편이에요'],['P','인식','상황에 맞춰 유연하게 움직여요']]},
+{k:'home',t:'반려견과 함께 지낼 집은 어떤 형태인가요?',o:[['apt','아파트·빌라','공동주택','아파트·빌라'],['house','단독주택','마당이 있어요','마당 있는 집']]},
+{k:'alone',t:'하루 중 반려견이 혼자 있게 될 시간은 얼마나 되나요?',o:[['s','4시간 이하','','혼자 4시간 이하'],['m','4~8시간','','혼자 4~8시간'],['l','8시간 이상','','혼자 8시간 이상']]},
+{k:'walk',t:'입양 후 하루에 함께 산책할 수 있는 시간은 얼마나 되나요?',o:[['s','30분 미만','','산책 30분 미만'],['m','30분~1시간','','산책 30분~1시간'],['l','1시간 이상','','산책 1시간 이상']]},
+{k:'exp',t:'반려견을 키워 본 적이 있나요?',o:[['no','처음 키워요','','첫 반려견'],['yes','이전에 키워 본 적 있어요','','양육 경험 있음']]},
+{k:'shed',t:'털 빠짐과 알레르기는 어느 정도까지 괜찮나요?',o:[['ok','상관없어요','털이 많이 빠져도 괜찮아요','털 상관없음'],['mid','적게 빠지면 좋겠어요','가벼운 청소 부담 정도는 괜찮아요','털 적게'],['sens','거의 빠지지 않아야 해요','본인이나 가족에게 알레르기가 있어요','털 거의 없게']]},
+{k:'kid',t:'함께 사는 가족 중 초등학생 이하 자녀가 있나요?',o:[['no','없어요','','어린 자녀 없음'],['yes','있어요','','어린 자녀 있음']]},
+{k:'groom',t:'빗질과 미용에 쓸 수 있는 시간은 어느 정도인가요?',o:[['low','주 1회 이하','털 관리가 간단한 견종이 좋아요','빗질 주 1회 이하'],['mid','주 2~3회 빗질','미용은 가끔 할 수 있어요','빗질 주 2~3회'],['high','매일 빗질, 정기 미용 가능','4~6주마다 미용해도 괜찮아요','매일 빗질·정기 미용']]}];
+const RL=['절대 키우면 안 되는 견종','잘 맞는 견종 한눈에','소형견 자세히','중형견 자세히','대형견 자세히','입양 전 약속'];
+const FB='MBTI 성향보다 지금의 생활과 잘 맞아 추천됐어요';
+let S={st:{},mode:'intro',qi:0,ri:0},lock=false,R=null;
+
+function score(d){
+  const st=S.st,dims=[st.m0,st.m1,st.m2,st.m3].map(c=>[c,DIM[c](d)]),mb=dims.reduce((s,x)=>s+x[1],0)/4;
+  const cons=[],extra=[];let pen=0;const add=(v,m)=>{if(v>0){pen+=v;cons.push([v,m])}};
+  if(LAW.has(d.n))add(.15,'법정 맹견이라 사육허가와 책임보험 가입이 꼭 필요해요');
+  if(st.home==='apt'){add(d.z===3?.25:0,'큰 몸이 마음껏 움직이기엔 아파트가 조금 좁아요');add(d.e>=5?.1:0,'넘치는 에너지를 실내에서 다 풀어 주기 어려워요');add(Math.max(0,d.b-3)*.1,'목소리가 커서 이웃과 마음 상할 일이 생길 수 있어요')}
+  add({s:0,m:Math.max(0,d.a-4)*.1,l:Math.max(0,d.a-3)*.12}[st.alone],'오래 혼자 기다리면 외로움에 마음이 아플 수 있어요');
+  add({s:Math.max(0,d.e-2)*.12,m:Math.max(0,d.e-3)*.12,l:0}[st.walk],'이 아이가 바라는 산책이 지금 함께해 줄 수 있는 시간보다 길어요');
+  if(st.exp==='no'){add(Math.max(0,3-d.t)*.1+Math.max(0,d.i-3)*.06,'자기 생각이 뚜렷해 첫 보호자에겐 교육이 쉽지 않아요');add(d.z===3&&d.e>=4?.1:0,'힘이 세고 활발해 첫 보호자에겐 벅찰 수 있어요')}
+  add({ok:0,mid:Math.max(0,d.s-3)*.12,sens:Math.max(0,d.s-1)*.1}[st.shed],'털이 많이 빠져 알레르기와 청소 부담이 커요');
+  if(st.kid==='yes')add(Math.max(0,3-d.k)*.15,'어린아이와 지낼 땐 세심하게 거리를 지켜 줘야 해요');
+  add({low:Math.max(0,d.g-2)*.1,mid:Math.max(0,d.g-3)*.12,high:0}[st.groom],'빗질과 정기 미용에 시간과 비용이 꽤 들어요');
+  const pros=dims.filter(x=>x[1]>=.6).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>WHY[x[0]]).concat(extra);
+  if(!pen)pros.unshift('지금의 생활 그대로 이 아이를 맞이할 수 있어요');
+  return{d,mb,sc:Math.round(100*(.35*mb+.65*Math.max(0,1-pen))),pros:pros.length?pros.slice(0,3):[FB],cons:cons.sort((a,b)=>b[0]-a[0]).map(x=>x[1])};
+}
+const results=()=>R||(R=B.map(score).sort((a,b)=>b.sc-a.sc||b.mb-a.mb));
+const type=()=>[S.st.m0,S.st.m1,S.st.m2,S.st.m3];
+const ring=v=>`<div class="ring" style="--v:${v}"><span>${v}<small>%</small></span></div>`;
+const MET=[['운동량','e'],['외로움 탐','a'],['털 빠짐','s'],['짖음','b'],['털 관리','g'],['훈련 쉬움','t'],['개 친구','dg'],['고양이 친구','ct']];
+const li=(c,a)=>a.map(t=>`<li class="${c}">${t}</li>`).join('');
+const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f(x.pros).slice(0,1))+li('c',[x.d.warn]):li('c',[x.d.warn].concat(f(x.cons).slice(0,1)));return `<div><h3><span class="no">${j}</span>${x.d.n}</h3><span class="v">${x.sc}%</span><p class="note" style="grid-column:1/-1;margin:0">${x.d.note}</p><ul class="pc">${L}</ul></div>`};
+const nav=(a,b,mid,okPrev,okNext)=>`<nav class="nav"><button type="button" class="ghost" data-act="${a}"${okPrev?'':' disabled'}>이전</button>${mid}<button type="button" class="ghost" data-act="${b}"${okNext?'':' disabled'}>다음</button></nav>`;
+
+function intro(){return `<div class="eyebrow">국내에서 사랑받는 견종 100종</div><h1>절대 키우면 안 되는 강아지, 그리고 나와 맞는 강아지</h1>
+<p class="lead">MBTI와 지금의 삶을 담은 11개의 질문으로, 100종 가운데 소형·중형·대형별로 피해야 할 견종 3마리와 잘 맞는 견종 3마리를 찾아드려요.</p>
+<div class="tag"><span class="t">MBTI</span><span class="kw sub">성향 · 생활 · 100종</span></div>
+<div class="facts"><span><b>11</b>문항</span><span><b>100</b>견종</span><span><b>6</b>장 결과</span></div>
+<button type="button" class="cta big" data-act="start"><span>나와 맞는 강아지 찾기</span><i aria-hidden="true">→</i></button><p class="tap">버튼을 눌러 시작해요 · 약 1분</p><div class="grow"></div>
+<p class="hint">끝까지 함께할 수 있는 아이를 고르는 일, 그게 유기를 막는 가장 따뜻한 첫걸음이에요.</p>`}
+
+function qPage(){const q=QS[S.qi],mb=S.qi<4,v=S.st[q.k];
+return `<div class="eyebrow">${mb?'MBTI':'함께할 삶'} · ${mb?S.qi+1:S.qi-3} / ${mb?4:QS.length-4}</div><h2>${q.t}</h2>
+<div class="opts">${q.o.map(([k,l,d])=>`<button type="button" class="opt" data-act="opt" data-v="${k}" aria-pressed="${v===k}">${mb?`<b>${k}</b>`:''}<span><strong>${l}</strong>${d?`<small>${d}</small>`:''}</span></button>`).join('')}</div>
+<div class="grow"></div>${nav('prev','next','',true,!!v)}`}
+
+const loadPg=()=>`<div class="load"><div class="spin"></div><h2>100마리 친구들의 마음을<br>하나하나 맞춰 보고 있어요</h2><p class="hint">${type().join('')} 당신의 하루를 떠올리며 계산하는 중이에요</p></div>`;
+
+const SZ=['','10kg 미만','10~25kg','25kg 이상'];
+const pick=(R,z,bad)=>{const a=R.filter(x=>x.d.z===z);return bad?a.slice(-3).reverse():a.slice(0,3)};
+const group=(R,bad)=>{const G=[1,2,3].map(z=>pick(R,z,bad)),cnt={};G.flat().forEach(x=>(bad?x.cons:x.pros).forEach(t=>cnt[t]=(cnt[t]||0)+1));
+ const com=Object.keys(cnt).filter(t=>cnt[t]>=3).sort((a,b)=>cnt[b]-cnt[a]).slice(0,3),skip=new Set(com);
+ return (com.length?`<div class="com"><h3>${bad?'여러 견종에 공통으로 걸리는 점':'여러 견종에 공통으로 잘 맞는 점'}</h3><ul class="pc">${li(bad?'c':'p',com)}</ul></div>`:'')+G.map((a,k)=>{const L=bad?'cons':'pros',gc=a[0][L].filter(t=>!skip.has(t)&&a.every(x=>x[L].includes(t))).slice(0,1),sk=new Set([...skip,...gc]);return `<section class="grp"><h3 class="gh">${SIZE[k+1]}견<small>${SZ[k+1]}</small></h3>${gc.length?`<ul class="pc">${li(bad?'c':'p',gc.map(t=>SIZE[k+1]+'견 공통: '+t))}</ul>`:''}${!bad&&a[0].sc<50?'<p class="hint">지금 생활에선 이 크기의 견종이 전반적으로 쉽지 않아요.</p>':''}<div class="rows${bad?'':' good'}">${a.map((x,j)=>row(x,j+1,!bad,sk)).join('')}</div></section>`}).join('')};
+const detail=(x,j)=>{const d=x.d;return `<article class="det"><div class="dh"><h3><span class="no">${j}</span>${d.n}</h3><span class="v">${x.sc}%</span></div><p class="note">${d.note}</p>
+<div class="mt">${MET.map(([l,k])=>`<span>${l}</span><div class="s5">${[1,2,3,4,5].map(i=>`<i${i<=d[k]?' class="on"':''}></i>`).join('')}</div>`).join('')}</div>
+<ul class="pc">${li('p',x.pros)}${li('c',x.cons.slice(0,2).concat(d.warn))}</ul></article>`};
+
+function rPage(){const R=results(),T=type(),i=S.ri;let h='';
+if(i===0)h=`<div class="alert"><div class="eyebrow">경고 · 지금의 생활 기준</div><h2>${T.join('')}인 당신이<br>절대 키우면 안 되는 견종</h2></div><p class="hint">아이들의 잘못이 아니에요. 지금의 생활과 맞지 않을 뿐이에요. 크기별로 3마리씩 골랐어요.</p>${group(R,1)}<p class="hint">그렇다면 나와 맞는 아이는 누구일까요? 다음 장에서 만나요.</p>`;
+else if(i===1)h=`<div class="tag"><span class="t">${T.join('')}</span><span class="kw">${T.map(c=>`<span>${KW[c]}</span>`).join('')}</span></div><h2>나와 잘 맞는 견종</h2>
+ <div class="chips">${QS.slice(4).map(q=>`<span>${q.o.find(o=>o[0]===S.st[q.k])[3]}</span>`).join('')}</div>${group(R,0)}<p class="hint">크기별로 자세히 보려면 다음 장으로 넘겨 주세요.</p>`;
+else if(i<=4){const z=i-1;h=`<div class="eyebrow">잘 맞는 견종 · ${SIZE[z]}견 ${SZ[z]}</div><h2>${SIZE[z]}견 TOP 3 자세히</h2><div>${pick(R,z,0).map((x,j)=>detail(x,j+1)).join('')}</div>`}
+else h=`<div class="eyebrow">입양 전 약속</div><h2>평생을 약속하기 전에, 마지막으로 물어봐요</h2>
+ <ul class="chk"><li>15년 남짓한 이 아이의 일생을 끝까지 함께할 수 있나요?</li><li>사료와 병원, 미용까지 매달 드는 비용을 감당할 수 있나요?</li><li>이사, 결혼, 출산, 이직으로 삶이 바뀌어도 이 아이의 자리는 그대로인가요?</li><li>생후 2개월이 지나면 동물등록을 꼭 해 주세요.</li></ul>
+ <div><h3 style="margin-bottom:4px">사지 말고, 먼저 만나 주세요</h3><p class="hint">보호소에도 이 목록 속 견종과 세상에 하나뿐인 믹스견들이 가족을 기다리고 있어요. <a href="https://www.animal.go.kr" target="_blank" rel="noopener">국가동물보호정보시스템</a>, <a href="https://pawinhand.kr" target="_blank" rel="noopener">포인핸드</a>에서 만날 수 있어요.</p></div>
+ <p class="hint">결과는 견종의 일반적인 경향을 담은 참고 자료예요. 같은 견종이라도 아이마다 성격이 모두 다르니, 꼭 직접 만나 보고 수의사·훈련사와 상담해 주세요.</p>
+ <div class="btns"><button type="button" class="cta" data-act="restart">처음부터 다시</button></div>`;
+return h+`<div class="grow"></div>`+nav('rprev','rnext',`<div class="dots">${RL.map((l,j)=>`<button type="button" data-act="dot" data-i="${j}" aria-label="${l}" aria-current="${j===i}"></button>`).join('')}</div>`,i>0,i<RL.length-1)}
+
+function view(dir){
+  const m=S.mode,h=m==='intro'?intro():m==='q'?qPage():m==='load'?loadPg():rPage();
+  document.getElementById('stage').innerHTML=`<div class="pg${dir<0?' l':''}">${h}</div>`;
+  document.getElementById('step').textContent=m==='q'?`질문 ${S.qi+1} / ${QS.length}`:m==='r'?`결과 ${S.ri+1} / ${RL.length}`:m==='load'?'분석 중':'';
+  document.getElementById('bar').style.width=(m==='q'?S.qi/QS.length*100:m==='intro'?0:100)+'%';
+  const st=document.getElementById('stage');st.querySelectorAll('.opt,.rows>div,.det,.grp>.pc').forEach((e,k)=>e.style.setProperty('--i',k));
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)st.querySelectorAll('.v').forEach(e=>{const n=parseInt(e.textContent),t0=performance.now();if(!(n>0))return;const f=t=>{const k=Math.min(1,(t-t0)/800);e.textContent=Math.round(n*(1-Math.pow(1-k,3)))+'%';if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)});
+  const top=document.querySelector('.wrap').getBoundingClientRect().top;if(top<0)window.scrollBy(0,top);
+}
+function step(dir){
+  if(S.mode==='q'){
+    if(dir<0){if(S.qi)S.qi--;else S.mode='intro'}
+    else if(S.qi<QS.length-1)S.qi++;
+    else{R=null;S.mode='load';view(1);setTimeout(()=>{S.mode='r';S.ri=0;view(1)},1600);return}
+  }else if(S.mode==='r'){const k=S.ri+dir;if(k<0||k>=RL.length)return;S.ri=k}else return;
+  view(dir);
+}
+document.getElementById('stage').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const a=b.dataset.act;
+  if(a==='start'){S.mode='q';S.qi=0;view(1)}
+  else if(a==='opt'){if(lock)return;S.st[QS[S.qi].k]=b.dataset.v;lock=true;b.parentNode.querySelectorAll('.opt').forEach(o=>o.setAttribute('aria-pressed',o===b));setTimeout(()=>{lock=false;step(1)},220)}
+  else if(a==='prev'||a==='rprev')step(-1);
+  else if(a==='next'||a==='rnext')step(1);
+  else if(a==='dot'){const j=+b.dataset.i,d=j<S.ri?-1:1;S.ri=j;view(d)}
+  else if(a==='restart'){S={st:{},mode:'intro',qi:0,ri:0};R=null;view(-1)}
+});
+document.addEventListener('keydown',e=>{if(S.mode!=='r')return;if(e.key==='ArrowRight')step(1);if(e.key==='ArrowLeft')step(-1)});
+let tx=null;const stg=document.getElementById('stage');
+stg.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+stg.addEventListener('touchend',e=>{if(tx===null||S.mode!=='r')return;const dx=e.changedTouches[0].clientX-tx;tx=null;if(Math.abs(dx)>50)step(dx<0?1:-1)});
+function start(d){if(d&&d.S){S=d.S;if(S.mode==='load')S.mode='r'}view(1)}
+window.claude?.hot?.snapshot?.(()=>({S}));
+window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
+</script>
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
+</body>
+</html>
