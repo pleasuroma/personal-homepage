@@ -67,6 +67,8 @@ main{max-width:720px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-rig
 .st{font-size:12px;font-weight:700;padding:4px 9px;border-radius:99px;background:var(--chip);color:var(--muted);white-space:nowrap}
 .st.warn{background:var(--point);color:var(--point-fg)}.st.ok{background:var(--accent);color:var(--accent-fg)}
 .lhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.warnbar{display:grid;gap:10px;margin-bottom:14px;padding:12px 14px;border-radius:12px;background:var(--point);color:var(--point-fg);font-size:14px}
+.warnbar .btn{background:var(--accent);color:var(--accent-fg);border-color:transparent;min-height:44px}
 .status{margin:14px 0 0;padding:10px 12px;border-radius:10px;background:var(--chip);font-size:14px}
 .chk{display:flex;align-items:center;gap:8px;font-size:14px}
 .chk input{width:20px;height:20px;accent-color:var(--point)}
@@ -87,6 +89,7 @@ pre{white-space:pre-wrap;word-break:break-all;background:var(--surface);border:1
 </header>
 
 <main>
+<div class="warnbar" id="inApp" hidden><b>카카오톡 등 앱 안의 브라우저에서는 PDF·연락처 파일이 저장되지 않습니다. Chrome에서 열어 주세요.</b><button class="btn" id="openExt">Chrome으로 열기</button></div>
 <!-- 홈 -->
 <section id="v-home" class="view home">
   <button class="tile" id="goDoc">
@@ -579,6 +582,14 @@ $('#cardsSave').onclick=async()=>{const reading=cards.filter(c=>c.state==='wait'
   const n=await saveContacts(cards.filter(c=>!['wait','ocr'].includes(c.state)));const skip=cards.length-reading-n;
   if(skip>0)setTimeout(()=>toast(`이름·회사가 비어 있는 ${skip}장은 빼고 저장했습니다`,4000),6200);drawList()};
 
+// 카카오톡·라인 등 앱 내 브라우저 → Chrome으로 넘기기 (파일 저장·앱 설치가 막혀 있음)
+{const UA=navigator.userAgent,kakao=/KAKAOTALK/i.test(UA),inApp=kakao||/Line\/|NAVER\(inapp|Instagram|FBAN|FBAV|DaumApps|; wv\)/i.test(UA);
+  const ext=()=>{const u=location.href;
+    if(kakao)location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(u);
+    else if(/Line\//i.test(UA))location.href=u+(u.includes('?')?'&':'?')+'openExternalBrowser=1';
+    else if(/Android/i.test(UA))location.href='intent://'+u.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;end';};
+  if(inApp){$('#inApp').hidden=false;$('#openExt').onclick=ext;
+    let first=true;try{first=!sessionStorage.getItem('extTried');sessionStorage.setItem('extTried','1')}catch(e){}if(kakao&&first)ext()}}
 if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js');
 </script>
 </body>
