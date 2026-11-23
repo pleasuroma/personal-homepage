@@ -460,9 +460,11 @@ document.getElementById('stage').addEventListener('click',e=>{
   else if(a==='restart'){S={st:{},mode:'intro',qi:0,ri:0};R=null;view(-1)}
 });
 document.addEventListener('keydown',e=>{if(S.mode!=='r')return;if(e.key==='ArrowRight')step(1);if(e.key==='ArrowLeft')step(-1)});
-let tx=null;const stg=document.getElementById('stage');
-stg.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
-stg.addEventListener('touchend',e=>{if(tx===null||S.mode!=='r')return;const dx=e.changedTouches[0].clientX-tx;tx=null;if(Math.abs(dx)>50)step(dx<0?1:-1)});
+// 가로 스와이프만 페이지를 넘겨요. 위아래 스크롤은 넘기지 않아요.
+let tx=null,ty=0;const stg=document.getElementById('stage');
+stg.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+stg.addEventListener('touchend',e=>{if(tx===null||S.mode!=='r')return;const t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;tx=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*2)step(dx<0?1:-1)});
+stg.addEventListener('touchcancel',()=>{tx=null},{passive:true});
 function start(d){if(d&&d.S){S=d.S;if(S.mode==='load')S.mode='r'}view(1)}
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
