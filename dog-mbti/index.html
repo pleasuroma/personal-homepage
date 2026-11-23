@@ -142,6 +142,8 @@ h1,h2,h3{font-weight:700;letter-spacing:-.01em}h1{font-size:clamp(28px,7vw,40px)
 .dz .mv{display:inline-block;font-size:11px;font-weight:700;color:var(--warn);border:1px solid var(--warn);border-radius:6px;padding:0 6px;margin-right:6px;vertical-align:1px}
 .ph{display:inline-block;width:40px;height:40px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:10px;background:var(--line);border:1px solid var(--line)}.det .ph{width:56px;height:56px}
 .cr{font-size:12.5px;color:var(--muted)}.cr summary{cursor:pointer}.cr ul{margin:6px 0 0;padding-left:18px;display:grid;gap:2px}
+.v b{font-weight:inherit}.v i{display:block;font:700 11px/1.2 var(--body);letter-spacing:.08em;color:var(--muted);text-align:right;font-style:normal;margin-top:2px}
+.pex{margin:0;font-size:13px;line-height:1.5;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:10px 12px}.pex b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -430,7 +432,7 @@ const ring=v=>`<div class="ring" style="--v:${v}"><span>${v}<small>%</small></sp
 const MET=[['운동량','e'],['외로움 탐','a'],['털 빠짐','s'],['짖음','b'],['털 관리','g'],['훈련 쉬움','t'],['개 친구','dg'],['고양이 친구','ct']];
 const li=(c,a)=>a.map(t=>`<li class="${c}">${t}</li>`).join('');
 const dzl=d=>`${d.mv?'<p class="dz"><b class="mv">MMVD(이첨판막 질환) 고위험군</b>중년(5~6살)부터 매년 심장 청진을 권해요</p>':''}${d.ch?`<p class="dz"><b class="mv">선천성 심장 질환 주의</b>${d.ch.join(' · ')} · 입양 초기에 심장 청진을 권해요</p>`:''}<p class="dz"><span>유전·호발 질환</span>${d.dz.join(' · ')}</p>`;
-const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f(x.pros).slice(0,1))+li('c',[x.d.warn]):li('c',[x.d.warn].concat(f(x.cons).slice(0,1)));return `<div><h3><span class="no">${j}</span>${ph(x.d)}${x.d.n}${good?`<small>${SIZE[x.d.z]} · ${TIER[x.d.pop][0]}</small>`:''}</h3><span class="v">${x.sc}%</span><p class="note" style="grid-column:1/-1;margin:0">${x.d.note}</p>${dzl(x.d)}<ul class="pc">${L}</ul></div>`};
+const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f(x.pros).slice(0,1))+li('c',[x.d.warn]):li('c',[x.d.warn].concat(f(x.cons).slice(0,1)));return `<div><h3><span class="no">${j}</span>${ph(x.d)}${x.d.n}${good?`<small>${SIZE[x.d.z]} · ${TIER[x.d.pop][0]}</small>`:''}</h3><span class="v"><b>${x.sc}</b>%<i>궁합</i></span><p class="note" style="grid-column:1/-1;margin:0">${x.d.note}</p>${dzl(x.d)}<ul class="pc">${L}</ul></div>`};
 const nav=(a,b,mid,okPrev,okNext)=>`<nav class="nav"><button type="button" class="ghost" data-act="${a}"${okPrev?'':' disabled'}>이전</button>${mid}<button type="button" class="ghost" data-act="${b}"${okNext?'':' disabled'}>다음</button></nav>`;
 
 function intro(){return `<div class="eyebrow">국내에서 사랑받는 견종 100종</div><h1>절대 키우면 안 되는 강아지, 그리고 나와 맞는 강아지</h1>
@@ -450,7 +452,8 @@ const loadPg=()=>`<div class="load"><div class="spin"></div><h2>100마리 친구
 const SZ=['','10kg 미만','10~25kg','25kg 이상'];
 const TIER=[['흔한 견종','국내에서 많이 키워요'],['가끔 만나는 견종','주변에서 가끔 볼 수 있어요'],['보기 드문 견종','만나기 어렵지만 잘 맞아요']];
 // 추천 6마리를 고를 때만 쓰는 가산점 (화면의 %와 비추천에는 쓰지 않아요)
-const PICK_BONUS={'말티즈':20,'포메라니안':20};
+// 국내에서 가장 많이 키우는 12종이 각각 비슷한 빈도(약 20%)로 나오도록 맞춘 값이에요.
+const PICK_BONUS={"말티즈":27,"토이 푸들":14,"포메라니안":33,"치와와":22,"시츄":7,"비숑 프리제":23,"진돗개":22,"골든 리트리버":23,"요크셔 테리어":21,"웰시 코기 펨브로크":14,"닥스훈트":17,"시바견":19};
 const adj=x=>x.sc+(PICK_BONUS[x.d.n]||0);
 const tiers=R=>[0,1,2].map(t=>R.filter(x=>x.d.pop===t).sort((a,b)=>adj(b)-adj(a)).slice(0,[3,2,1][t]));
 const top6=R=>tiers(R).flat().sort((a,b)=>b.sc-a.sc||a.d.pop-b.d.pop);
@@ -458,14 +461,14 @@ const pick=(R,z,bad)=>{const rec=bad?new Set(top6(R).map(x=>x.d.n)):new Set(),a=
 const group=(R,bad)=>{const G=bad?[1,2,3].map(z=>pick(R,z,1)):[top6(R)],H=bad?[1,2,3].map(z=>[SIZE[z]+'견',SZ[z]]):[['나와 잘 맞는 6마리','점수순 · 흔한 3 · 가끔 2 · 드문 1']],cnt={};G.flat().forEach(x=>(bad?x.cons:x.pros).forEach(t=>cnt[t]=(cnt[t]||0)+1));
  const com=Object.keys(cnt).filter(t=>cnt[t]>=3).sort((a,b)=>cnt[b]-cnt[a]).slice(0,3),skip=new Set(com);
  return (com.length?`<div class="com"><h3>${bad?'여러 견종에 공통으로 걸리는 점':'여러 견종에 공통으로 잘 맞는 점'}</h3><ul class="pc">${li(bad?'c':'p',com)}</ul></div>`:'')+G.map((a,k)=>{const L=bad?'cons':'pros',gc=(!bad||a.length<2)?[]:a[0][L].filter(t=>!skip.has(t)&&a.every(x=>x[L].includes(t))).slice(0,1),sk=new Set([...skip,...gc]);return `<section class="grp"><h3 class="gh">${H[k][0]}<small>${H[k][1]}</small></h3>${gc.length?`<ul class="pc">${li(bad?'c':'p',gc.map(t=>H[k][0]+' 공통: '+t))}</ul>`:''}${!bad&&a[0].sc<50?'<p class="hint">지금 생활에선 이 그룹의 견종이 전반적으로 쉽지 않아요.</p>':''}<div class="rows${bad?'':' good'}">${a.map((x,j)=>row(x,j+1,!bad,sk)).join('')}</div></section>`}).join('')};
-const detail=(x,j)=>{const d=x.d;return `<article class="det"><div class="dh"><h3><span class="no">${j}</span>${ph(d)}${d.n}<span class="size">${SIZE[d.z]} · ${TIER[d.pop][0]}</span></h3><span class="v">${x.sc}%</span></div><p class="note">${d.note}</p>${dzl(d)}
+const detail=(x,j)=>{const d=x.d;return `<article class="det"><div class="dh"><h3><span class="no">${j}</span>${ph(d)}${d.n}<span class="size">${SIZE[d.z]} · ${TIER[d.pop][0]}</span></h3><span class="v"><b>${x.sc}</b>%<i>궁합</i></span></div><p class="note">${d.note}</p>${dzl(d)}
 <div class="mt">${MET.map(([l,k])=>`<span>${l}</span><div class="s5">${[1,2,3,4,5].map(i=>`<i${i<=d[k]?' class="on"':''}></i>`).join('')}</div>`).join('')}</div>
 <ul class="pc">${li('p',x.pros)}${li('c',x.cons.slice(0,2).concat(d.warn))}</ul></article>`};
 
 function rPage(){const R=results(),T=type(),i=S.ri;let h='';
-if(i===0)h=`<div class="alert"><div class="eyebrow">경고 · 지금의 생활 기준</div><h2>${T.join('')}인 당신이<br>절대 키우면 안 되는 견종</h2></div><p class="hint">아이들의 잘못이 아니에요. 지금의 생활과 맞지 않을 뿐이에요. 크기별로 3마리씩 골랐어요.</p>${group(R,1)}<p class="hint">그렇다면 나와 맞는 아이는 누구일까요? 다음 장에서 만나요.</p>`;
+if(i===0)h=`<div class="alert"><div class="eyebrow">경고 · 지금의 생활 기준</div><h2>${T.join('')}인 당신이<br>절대 키우면 안 되는 견종</h2></div><p class="hint">아이들의 잘못이 아니에요. 지금의 생활과 맞지 않을 뿐이에요. 크기별로 3마리씩 골랐어요.</p><p class="pex">오른쪽 %는 나와의 <b>궁합 점수</b>예요. 낮을수록 지금 생활과 맞지 않아요.</p>${group(R,1)}<p class="hint">그렇다면 나와 맞는 아이는 누구일까요? 다음 장에서 만나요.</p>`;
 else if(i===1)h=`<div class="tag"><span class="t">${T.join('')}</span><span class="kw">${T.map(c=>`<span>${KW[c]}</span>`).join('')}</span></div><h2>나와 잘 맞는 견종</h2>
- <div class="chips">${QS.slice(4).map(q=>`<span>${q.o.find(o=>o[0]===S.st[q.k])[3]}</span>`).join('')}</div>${group(R,0)}<p class="hint">한 마리씩 자세히 보려면 다음 장으로 넘겨 주세요.</p>`;
+ <div class="chips">${QS.slice(4).map(q=>`<span>${q.o.find(o=>o[0]===S.st[q.k])[3]}</span>`).join('')}</div><p class="pex">오른쪽 %는 나와의 <b>궁합 점수</b>예요. 성향(MBTI) 35%와 생활 조건 65%로 계산하고, 내 생활이 그 아이에게 잘 맞으면 점수를 더해요.</p>${group(R,0)}<p class="hint">한 마리씩 자세히 보려면 다음 장으로 넘겨 주세요.</p>`;
 else if(i<=4){const t=i-2,L=top6(R).slice(t*2,t*2+2);h=`<div class="eyebrow">잘 맞는 견종 · 점수순</div><h2>${t*2+1}·${t*2+2}위 자세히</h2><p class="hint">유전·호발 질환은 그 견종에서 상대적으로 잘 나타나는 질환이에요. 모든 아이에게 생기는 건 아니에요.</p><div>${L.map((x,j)=>detail(x,t*2+j+1)).join('')}</div>`}
 else h=`<div class="eyebrow">입양 전 약속</div><h2>평생을 약속하기 전에, 마지막으로 물어봐요</h2>
  <ul class="chk"><li>15년 남짓한 이 아이의 일생을 끝까지 함께할 수 있나요?</li><li>사료와 병원, 미용까지 매달 드는 비용을 감당할 수 있나요?</li><li>이사, 결혼, 출산, 이직으로 삶이 바뀌어도 이 아이의 자리는 그대로인가요?</li><li>생후 2개월이 지나면 동물등록을 꼭 해 주세요.</li></ul>
@@ -481,7 +484,7 @@ function view(dir){
   document.getElementById('step').textContent=m==='q'?`질문 ${S.qi+1} / ${QS.length}`:m==='r'?`결과 ${S.ri+1} / ${RL.length}`:m==='load'?'분석 중':'';
   document.getElementById('bar').style.width=(m==='q'?S.qi/QS.length*100:m==='intro'?0:100)+'%';
   const st=document.getElementById('stage');st.querySelectorAll('.opt,.rows>div,.det,.grp>.pc').forEach((e,k)=>e.style.setProperty('--i',k));
-  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)st.querySelectorAll('.v').forEach(e=>{const n=parseInt(e.textContent),t0=performance.now();if(!(n>0))return;const f=t=>{const k=Math.min(1,(t-t0)/800);e.textContent=Math.round(n*(1-Math.pow(1-k,3)))+'%';if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)});
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)st.querySelectorAll('.v b').forEach(e=>{const n=parseInt(e.textContent),t0=performance.now();if(!(n>0))return;const f=t=>{const k=Math.min(1,(t-t0)/800);e.textContent=Math.round(n*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)});
   const top=document.querySelector('.wrap').getBoundingClientRect().top;if(top<0)window.scrollBy(0,top);
 }
 function step(dir){
