@@ -131,6 +131,7 @@ h1,h2,h3{font-weight:700;letter-spacing:-.01em}h1{font-size:clamp(28px,7vw,40px)
 @keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
 @media (prefers-reduced-motion:reduce){.pg>*,.opt,.rows>div,.det,.grp>.pc,.cta.big,.cta.big i,.cta.big::after,.tag::after{animation:none}}
 .dz{grid-column:1/-1;margin:0;font-size:13px;line-height:1.5;color:var(--muted)}.dz span{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--teal);border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-right:6px;vertical-align:1px}
+.dz .mv{display:inline-block;font-size:11px;font-weight:700;color:var(--warn);border:1px solid var(--warn);border-radius:6px;padding:0 6px;margin-right:6px;vertical-align:1px}
 </style>
 </head>
 <body>
@@ -247,10 +248,10 @@ const B=`말티즈|1|3|5|3|1|3|4|1|4|2|3|사람 곁을 좋아하는 애교쟁이
 const DC='44 44 33 23 55 55 33 11 43 55 54 22 32 44 53 33 32 44 53 51 55 34 44 32 42 44 21 44 44 55 32 32 44 55 55 34 45 33 11 33 33 34 54 21 12 34 33 42 33 32 44 55 34 42 32 22 21 22 22 22 11 22 22 54 31 33 31 42 44 43 22 44 44 55 12 22 44 44 31 31 41 43 55 54 33 44 33 54 32 33 44 54 22 43 43 55 22 41 11 22'.split(' ');
 B.forEach((d,j)=>{d.dg=+DC[j][0];d.ct=+DC[j][1]});
 // 대표 유전·호발 질환 (견종 이름 기준, 쉼표로 구분)
-const DZ=Object.fromEntries(`말티즈|슬개골 탈구,이첨판 폐쇄부전증,괴사성 뇌수막뇌염
+const DZ=Object.fromEntries(`말티즈|슬개골 탈구,이첨판막 질환(MMVD),괴사성 뇌수막뇌염
 토이 푸들|슬개골 탈구,레그-칼베-페르테스병,진행성 망막 위축증
 포메라니안|기관 허탈,슬개골 탈구,탈모 X
-치와와|수두증,슬개골 탈구,이첨판 폐쇄부전증
+치와와|수두증,슬개골 탈구,이첨판막 질환(MMVD)
 시츄|단두종 기도 증후군,건성 각결막염,추간판 탈출증
 비숑 프리제|아토피 피부염,요로결석,백내장
 요크셔 테리어|기관 허탈,간문맥 단락,슬개골 탈구
@@ -276,14 +277,14 @@ const DZ=Object.fromEntries(`말티즈|슬개골 탈구,이첨판 폐쇄부전�
 잭 러셀 테리어|원발성 수정체 탈구,레그-칼베-페르테스병,선천성 난청
 보스턴 테리어|단두종 기도 증후군,각막 궤양,비만세포종
 아메리칸 코커 스패니얼|만성 외이염,원발성 녹내장,면역매개성 용혈성 빈혈
-카발리에 킹 찰스 스패니얼|이첨판 폐쇄부전증,척수공동증
+카발리에 킹 찰스 스패니얼|이첨판막 질환(MMVD),척수공동증
 베들링턴 테리어|구리 축적 간질환,망막 이형성증
 웨스트 하이랜드 화이트 테리어|아토피 피부염,특발성 폐섬유증,두개하악골증
 스탠다드 푸들|애디슨병,위확장-염전,피지선염
-말티푸|슬개골 탈구,이첨판 폐쇄부전증 등 부모 견종 질환
+말티푸|슬개골 탈구,이첨판막 질환(MMVD) 등 부모 견종 질환
 꼬똥 드 툴레아|슬개골 탈구,다발성 망막병증
 라사 압소|가족성 신장 이형성증,건성 각결막염,진행성 망막 위축증
-재패니즈 친|단두종 기도 증후군,슬개골 탈구,이첨판 폐쇄부전증
+재패니즈 친|단두종 기도 증후군,슬개골 탈구,이첨판막 질환(MMVD)
 삽살개|알려진 유전 질환 자료가 적어요(고관절 검진 권장)
 풍산개|알려진 유전 질환 자료가 적어요(고관절 검진 권장)
 저먼 셰퍼드|고관절·팔꿈치 이형성증,퇴행성 척수병증,외분비 췌장 기능 부전
@@ -294,7 +295,7 @@ const DZ=Object.fromEntries(`말티즈|슬개골 탈구,이첨판 폐쇄부전�
 차우차우|안검 내반증,고관절 이형성증,낙엽상 천포창
 잉글리시 불독|단두종 기도 증후군,체리아이,고관절 이형성증
 오스트레일리안 셰퍼드|MDR1 약물 민감성,유전성 백내장,특발성 간질
-휘핏|이첨판 폐쇄부전증,마취제 민감성
+휘핏|이첨판막 질환(MMVD),마취제 민감성
 아메리칸 불리|고관절 이형성증,아토피 피부염,짧은 주둥이로 인한 호흡 문제
 실키 테리어|슬개골 탈구,레그-칼베-페르테스병,기관 허탈
 미니어처 푸들|슬개골 탈구,진행성 망막 위축증,쿠싱 증후군
@@ -348,6 +349,9 @@ const DZ=Object.fromEntries(`말티즈|슬개골 탈구,이첨판 폐쇄부전�
 도고 아르헨티노|선천성 난청,고관절 이형성증
 미니어처 불테리어|원발성 수정체 탈구,선천성 난청,유전성 신장 질환`.split('\n').map(l=>{const [k,v]=l.split('|');return [k,v.split(',')]}));
 B.forEach(d=>d.dz=DZ[d.n]||[]);
+// MMVD(이첨판막 질환) 고위험 견종
+const MMVD=new Set('카발리에 킹 찰스 스패니얼,치와와,말티즈,토이 푸들,미니어처 푸들,요크셔 테리어,시츄,포메라니안,닥스훈트,미니어처 슈나우저,파피용,페키니즈,재패니즈 친,말티푸,휘핏'.split(','));
+B.forEach(d=>{d.mv=MMVD.has(d.n);if(d.mv)d.dz=d.dz.filter(t=>t!=='이첨판막 질환(MMVD)')});
 const n=x=>(x-1)/4,r=x=>(5-x)/4;
 const DIM={E:d=>.6*n(d.f)+.4*n(d.e),I:d=>.5*r(d.b)+.3*r(d.e)+.2*r(d.f),S:d=>.5*r(d.g)+.5*r(d.p),N:d=>.7*n(d.p)+.3*n(d.t),T:d=>.7*n(d.i)+.3*r(d.a),F:d=>.7*n(d.a)+.3*n(d.f),J:d=>n(d.t),P:d=>.4*r(d.g)+.3*n(d.i)+.3*n(d.p)};
 const WHY={E:'사람과 친구를 반기는 아이라, 함께 걷는 길마다 새로운 인연이 생겨요',I:'조용하고 차분한 아이라, 고요한 나의 시간을 함께 지켜 줘요',S:'한결같고 손이 덜 가는 아이라, 소박한 일상에 자연스레 스며들어요',N:'호기심 가득한 아이라, 매일 새로운 놀이를 함께 꿈꿀 수 있어요',T:'스스로 설 줄 아는 아이라, 서로의 공간을 존중하며 담백하게 사랑할 수 있어요',F:'애정 표현이 풍부한 아이라, 마음을 나누는 기쁨이 매일 쌓여요',J:'배우기를 좋아하는 아이라, 함께 만든 약속과 루틴이 단단해져요',P:'적응력이 좋은 아이라, 즉흥적인 하루에도 기꺼이 함께해요'};
@@ -390,7 +394,7 @@ const type=()=>[S.st.m0,S.st.m1,S.st.m2,S.st.m3];
 const ring=v=>`<div class="ring" style="--v:${v}"><span>${v}<small>%</small></span></div>`;
 const MET=[['운동량','e'],['외로움 탐','a'],['털 빠짐','s'],['짖음','b'],['털 관리','g'],['훈련 쉬움','t'],['개 친구','dg'],['고양이 친구','ct']];
 const li=(c,a)=>a.map(t=>`<li class="${c}">${t}</li>`).join('');
-const dzl=d=>`<p class="dz"><span>유전·호발 질환</span>${d.dz.join(' · ')}</p>`;
+const dzl=d=>`${d.mv?'<p class="dz"><b class="mv">MMVD(이첨판막 질환) 고위험군</b>중년(5~6살)부터 매년 심장 청진을 권해요</p>':''}<p class="dz"><span>유전·호발 질환</span>${d.dz.join(' · ')}</p>`;
 const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f(x.pros).slice(0,1))+li('c',[x.d.warn]):li('c',[x.d.warn].concat(f(x.cons).slice(0,1)));return `<div><h3><span class="no">${j}</span>${x.d.n}</h3><span class="v">${x.sc}%</span><p class="note" style="grid-column:1/-1;margin:0">${x.d.note}</p>${dzl(x.d)}<ul class="pc">${L}</ul></div>`};
 const nav=(a,b,mid,okPrev,okNext)=>`<nav class="nav"><button type="button" class="ghost" data-act="${a}"${okPrev?'':' disabled'}>이전</button>${mid}<button type="button" class="ghost" data-act="${b}"${okNext?'':' disabled'}>다음</button></nav>`;
 
