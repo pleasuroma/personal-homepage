@@ -428,9 +428,12 @@ const loadPg=()=>`<div class="load"><div class="spin"></div><h2>100마리 친구
 
 const SZ=['','10kg 미만','10~25kg','25kg 이상'];
 const TIER=[['흔한 견종','국내에서 많이 키워요'],['가끔 만나는 견종','주변에서 가끔 볼 수 있어요'],['보기 드문 견종','만나기 어렵지만 잘 맞아요']];
-const tiers=R=>[0,1,2].map(t=>R.filter(x=>x.d.pop===t).slice(0,[3,2,1][t]));
+// 추천 6마리를 고를 때만 쓰는 가산점 (화면의 %와 비추천에는 쓰지 않아요)
+const PICK_BONUS={'말티즈':20,'포메라니안':20};
+const adj=x=>x.sc+(PICK_BONUS[x.d.n]||0);
+const tiers=R=>[0,1,2].map(t=>R.filter(x=>x.d.pop===t).sort((a,b)=>adj(b)-adj(a)).slice(0,[3,2,1][t]));
 const top6=R=>tiers(R).flat().sort((a,b)=>b.sc-a.sc||a.d.pop-b.d.pop);
-const pick=(R,z,bad)=>{const a=R.filter(x=>x.d.z===z&&x.d.pop<2);return bad?[...a].sort((x,y)=>x.sc-y.sc||x.d.pop-y.d.pop).slice(0,3):a.slice(0,3)};
+const pick=(R,z,bad)=>{const rec=bad?new Set(top6(R).map(x=>x.d.n)):new Set(),a=R.filter(x=>x.d.z===z&&x.d.pop<2&&!rec.has(x.d.n));return bad?[...a].sort((x,y)=>x.sc-y.sc||x.d.pop-y.d.pop).slice(0,3):a.slice(0,3)};
 const group=(R,bad)=>{const G=bad?[1,2,3].map(z=>pick(R,z,1)):[top6(R)],H=bad?[1,2,3].map(z=>[SIZE[z]+'견',SZ[z]]):[['나와 잘 맞는 6마리','점수순 · 흔한 3 · 가끔 2 · 드문 1']],cnt={};G.flat().forEach(x=>(bad?x.cons:x.pros).forEach(t=>cnt[t]=(cnt[t]||0)+1));
  const com=Object.keys(cnt).filter(t=>cnt[t]>=3).sort((a,b)=>cnt[b]-cnt[a]).slice(0,3),skip=new Set(com);
  return (com.length?`<div class="com"><h3>${bad?'여러 견종에 공통으로 걸리는 점':'여러 견종에 공통으로 잘 맞는 점'}</h3><ul class="pc">${li(bad?'c':'p',com)}</ul></div>`:'')+G.map((a,k)=>{const L=bad?'cons':'pros',gc=(!bad||a.length<2)?[]:a[0][L].filter(t=>!skip.has(t)&&a.every(x=>x[L].includes(t))).slice(0,1),sk=new Set([...skip,...gc]);return `<section class="grp"><h3 class="gh">${H[k][0]}<small>${H[k][1]}</small></h3>${gc.length?`<ul class="pc">${li(bad?'c':'p',gc.map(t=>H[k][0]+' 공통: '+t))}</ul>`:''}${!bad&&a[0].sc<50?'<p class="hint">지금 생활에선 이 그룹의 견종이 전반적으로 쉽지 않아요.</p>':''}<div class="rows${bad?'':' good'}">${a.map((x,j)=>row(x,j+1,!bad,sk)).join('')}</div></section>`}).join('')};
