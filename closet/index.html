@@ -143,10 +143,10 @@ select.in{padding:7px 8px}
       <input class="vh" id="cam" type="file" accept="image/*" capture="environment">
     </div>
     <div class="queue" id="queue" hidden></div>
+    <div class="panel" id="backup" hidden><b>옷장 백업</b><span class="sub2" id="bk-text"></span><div class="actions"><button class="btn sm" data-act="bk-out">백업 파일 만들기</button><label class="btn sm" for="bk-in">백업 파일 불러오기</label><input class="vh" id="bk-in" type="file" accept="application/json,.json"></div></div>
     <div class="panel" id="review" hidden></div>
     <div class="filters"><div class="chips" id="f-season"></div><div class="chips" id="f-slot"></div><div class="chips" id="f-fit"></div></div>
     <div class="grid" id="grid"></div>
-    <div class="panel" id="backup" hidden><b>옷장 백업</b><span class="sub2">옷장은 이 기기의 브라우저에 저장돼요. 브라우저 데이터를 지우거나 핸드폰을 바꾸면 사라지니, 옷을 많이 올린 뒤에는 백업 파일을 만들어 두세요. 다른 기기에서 불러오면 그대로 옮겨져요.</span><div class="actions"><button class="btn sm" data-act="bk-out">백업 파일 만들기</button><label class="btn sm" for="bk-in">백업 불러오기</label><input class="vh" id="bk-in" type="file" accept="application/json,.json"></div></div>
     <div class="empty" id="empty" hidden>
       <h3>아직 옷장이 비어 있어요</h3>
       <ol class="steps">
@@ -347,7 +347,7 @@ function renderQueue(){const q=S.q,el=$("#queue");if(!q.total){el.hidden=true;re
 
 /* ---------- render ---------- */
 function chips(id,pairs,cur,key){$(id).innerHTML=pairs.map(([k,v])=>`<button class="chip${k==="review"?" warn":""}" data-k="${key}" data-v="${k}" aria-pressed="${cur===k}">${esc(v)}</button>`).join("")}
-function render(){renderConn();$("#backup").hidden=!!window.claude?.use||S.mode!=="local";for(const t of["closet","match","saved"]){$("#p-"+t).hidden=S.tab!==t;$("#t-"+t).setAttribute("aria-selected",S.tab===t)}
+function render(){renderConn();$("#backup").hidden=!S.itemsCol;$("#bk-text").textContent=S.mode==="cloud"?"옷장은 claude.ai 계정에 저장돼요. 백업 파일을 내려받아 두면 따로 보관하거나 웹앱으로 옮길 수 있어요.":"옷장은 이 기기의 브라우저에 저장돼요. 브라우저 데이터를 지우거나 핸드폰을 바꾸면 사라지니, 옷을 많이 올린 뒤에는 백업 파일을 만들어 두세요. 다른 기기에서 불러오면 그대로 옮겨져요.";for(const t of["closet","match","saved"]){$("#p-"+t).hidden=S.tab!==t;$("#t-"+t).setAttribute("aria-selected",S.tab===t)}
   const c={};S.items.forEach(i=>{const s=slotOf(i)||"none";c[s]=(c[s]||0)+1});
   $("#stats").textContent=S.loading?"":`옷 ${S.items.length}벌 · 상의 ${c.top||0} · 하의 ${c.bottom||0} · 아우터 ${c.outer||0} · 신발 ${c.shoes||0}`;
   if(S.tab==="closet")renderCloset();else if(S.tab==="match")renderMatch();else renderSaved()}
@@ -501,15 +501,17 @@ async function setFace(f){if(!f)return;if(!S.setCol||!S.assets)return toast("저
   catch{toast("얼굴 사진을 읽지 못했어요. JPG나 PNG로 다시 올려 주세요.")}}
 /* ---------- 백업 (브라우저 저장용) ---------- */
 const dataUrl=b=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsDataURL(b)});
+const dataBlob=u=>{const[h,b]=u.split(","),bin=atob(b),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:(h.match(/:(.*?);/)||[])[1]||"image/jpeg"})};
 async function exportBackup(){toast("백업 파일을 만드는 중…");const blobs={};
   for(const id of new Set([...S.items.map(i=>i.assetId),S.profile?.assetId].filter(Boolean))){try{blobs[id]=await dataUrl(await(await fetch(src(id))).blob())}catch{}}
   const data={app:"jpl-closet",v:1,at:new Date().toISOString(),items:S.items,outfits:S.outfits,cats:S.cats,profile:S.profile||null,blobs};
-  const url=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:"application/json"})),a=document.createElement("a");
-  a.href=url;a.download=`my-closet-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);
+  const blob=new Blob([JSON.stringify(data)],{type:"application/json"}),name=`my-closet-backup-${new Date().toISOString().slice(0,10)}.json`;
+  if(window.claude?.use){const dl=await claude.use("downloads").catch(()=>null);if(!dl)return toast("이 화면에서는 파일을 내려받을 수 없어요.");try{await dl.save({filename:name,data:blob})}catch{return toast("백업 파일을 저장하지 않았어요.")}}
+  else{const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000)}
   toast(`옷 ${S.items.length}벌을 백업 파일로 저장했어요.`)}
 async function importBackup(f){if(!S.itemsCol||!S.assets)return toast("저장소에 연결된 뒤 다시 해 주세요.");
   try{const d=JSON.parse(await f.text());if(d.app!=="jpl-closet")throw 0;toast("백업을 불러오는 중…");const map={};
-    const up=async id=>{if(!id||!d.blobs?.[id])return id;if(!map[id]){const b=await(await fetch(d.blobs[id])).blob();map[id]=(await S.assets.upload(b,{type:"image/jpeg"})).id}return map[id]};
+    const up=async id=>{if(!id||!d.blobs?.[id])return id;if(!map[id]){const b=dataBlob(d.blobs[id]);map[id]=(await S.assets.upload(b,{type:"image/jpeg"})).id}return map[id]};
     let n=0;for(const it of d.items||[]){const{id,...v}=it;if(!id||S.items.some(x=>x.id===id))continue;await S.itemsCol.doc(id).set({...v,assetId:await up(v.assetId)});n++}
     for(const o of d.outfits||[]){const{id,...v}=o;if(id&&!S.outfits.some(x=>x.id===id))await S.outCol.doc(id).set(v)}
     if(Array.isArray(d.cats)&&d.cats.length)await S.setCol.doc("main").set({cats:d.cats,updatedAt:Date.now()});
