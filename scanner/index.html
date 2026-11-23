@@ -23,7 +23,7 @@ button{cursor:pointer}
 .ib{border:0;background:none;width:40px;height:40px;margin-left:-10px;border-radius:10px;font-size:22px}
 main{max-width:720px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-right)) 140px max(16px,env(safe-area-inset-left))}
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;gap:8px;padding:10px max(16px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:var(--bg);border-top:1px solid var(--line)}
-.btn{flex:1;min-height:50px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:600}
+.btn{flex:1;min-height:50px;padding:0 10px;white-space:nowrap;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:600}
 .btn.pri{background:var(--accent);color:var(--accent-fg);border-color:transparent;flex:1.5}
 .btn.sm{min-height:40px;flex:0 0 auto;font-weight:500}
 .btn:disabled{opacity:.4}
@@ -60,6 +60,13 @@ main{max-width:720px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-rig
 .ph.has{border-style:solid}
 .side .row{margin:0}
 .side .row .btn{min-height:40px;font-size:14px}
+.clist{display:grid;gap:10px}
+.crow{display:grid;grid-template-columns:92px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;padding:8px 10px 8px 8px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.crow img{width:92px;aspect-ratio:9/5;object-fit:cover;border-radius:6px;background:#fff;display:block}
+.ci{display:grid;min-width:0}.ci b,.ci small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ci small{color:var(--muted);font-size:13px}
+.st{font-size:12px;font-weight:700;padding:4px 9px;border-radius:99px;background:var(--chip);color:var(--muted);white-space:nowrap}
+.st.warn{background:var(--point);color:var(--point-fg)}.st.ok{background:var(--accent);color:var(--accent-fg)}
+.lhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
 .status{margin:14px 0 0;padding:10px 12px;border-radius:10px;background:var(--chip);font-size:14px}
 .chk{display:flex;align-items:center;gap:8px;font-size:14px}
 .chk input{width:20px;height:20px;accent-color:var(--point)}
@@ -133,6 +140,18 @@ pre{white-space:pre-wrap;word-break:break-all;background:var(--surface);border:1
 </section>
 
 <!-- 명함 -->
+<section id="v-cards" class="view" hidden>
+  <div id="cardsEmpty" class="empty">명함을 찍을 때마다 아래 목록에 쌓이고, 순서대로 자동으로 읽습니다.<br><b>촬영</b>을 연달아 누르거나 <b>앨범</b>에서 여러 장을 한 번에 고르세요.<br>양면 명함은 목록에서 눌러 뒷면을 추가하면 됩니다.</div>
+  <div class="lhead" id="listHead" hidden><span id="listCount"></span><button class="btn sm" id="cardsClear">목록 비우기</button></div>
+  <p class="status" id="listStatus" hidden style="margin:0 0 10px"></p>
+  <div id="cardList" class="clist"></div>
+  <div class="dock">
+    <button class="btn" id="cardsLib">앨범</button>
+    <button class="btn pri" id="cardsCam">촬영</button>
+    <button class="btn" id="cardsSave" disabled>모두 저장</button>
+  </div>
+</section>
+
 <section id="v-card" class="view" hidden>
   <div class="sides" id="sides">
     <div class="side" data-side="0">
@@ -158,8 +177,9 @@ pre{white-space:pre-wrap;word-break:break-all;background:var(--surface);border:1
   </form>
   <details><summary>인식된 원문 보기</summary><pre id="raw">(아직 없음)</pre></details>
   <div class="dock">
-    <button class="btn" id="cardNew">새 명함</button>
-    <button class="btn pri" id="cardSave">연락처에 추가</button>
+    <button class="btn" id="cardDel">삭제</button>
+    <button class="btn" id="cardSave">저장</button>
+    <button class="btn pri" id="cardDone">완료</button>
   </div>
 </section>
 </main>
@@ -288,9 +308,9 @@ async function process(it,src){
 }
 
 /* ---------- 화면 전환 (안드로이드 뒤로가기 지원) ---------- */
-const TITLES={home:'바로스캔',doc:'문서 스캔',edit:'페이지 편집',card:'명함 스캔'};
+const TITLES={home:'바로스캔',doc:'문서 스캔',edit:'페이지 편집',cards:'명함 스캔',card:'명함 확인'};
 let view='home';
-function show(v){view=v;$$('.view').forEach(s=>s.hidden=s.id!=='v-'+v);$('#ttl').textContent=TITLES[v];$('#back').hidden=v==='home';updateSub();scrollTo(0,0)}
+function show(v){view=v;$$('.view').forEach(s=>s.hidden=s.id!=='v-'+v);$('#ttl').textContent=TITLES[v];$('#back').hidden=v==='home';updateSub();scrollTo(0,0);if(v==='cards')drawList()}
 function go(v){history.pushState({v},'');show(v)}
 history.replaceState({v:'home'},'');
 addEventListener('popstate',e=>{const v=e.state?.v||'home';if(view==='edit'&&v!=='edit')edClose();show(v)});
@@ -301,20 +321,20 @@ $('#install').onclick=()=>{bip?.prompt();bip=null;$('#install').hidden=true};
 addEventListener('beforeunload',e=>{if(doc.length){e.preventDefault();e.returnValue=''}});
 
 /* ---------- 사진 가져오기 ---------- */
-const doc=[],card=[null,null];
+const doc=[],cards=[];let card=[null,null],cc=null;
 let pick=null;
 function openPick(cam,target){pick=target;const f=cam?$('#fCam'):$('#fLib');f.value='';f.click()}
 async function onFiles(e){
   const files=[...e.target.files],t=pick;if(!files.length||!t)return;
-  const list=t.kind==='card'?files.slice(0,2-t.side):files;
+  const list=t.kind==='card'&&!t.batch?files.slice(0,2-t.side):files;
   for(const[i,f]of list.entries()){
     busy(list.length>1?`자동 보정 중 ${i+1} / ${list.length}`:'테두리 찾고 보정하는 중…');await sleep(40);
     const it={file:f,kind:t.kind,rot:0,filter:t.kind==='doc'?'scan':'vivid'};
     try{await process(it)}catch(err){console.error(err);toast('사진을 처리하지 못했습니다. 다시 찍어 주세요.');continue}
-    if(t.kind==='doc'){doc.push(it);if($('#autoImg').checked){saveBlob(it.blob,imgName(doc.length-1));await sleep(300)}}else card[t.side+i]=it;
+    if(t.kind==='doc'){doc.push(it);if($('#autoImg').checked){saveBlob(it.blob,imgName(doc.length-1));await sleep(300)}}else if(t.batch)cards.push(newCard(it));else card[t.side+i]=it;
   }
   busy();
-  if(t.kind==='doc'){drawDoc();if(doc.length)toast(`${doc.length}페이지 · 계속 찍거나 PDF로 저장하세요`)}else{drawCard();runOCR()}
+  if(t.kind==='doc'){drawDoc();if(doc.length)toast(`${doc.length}페이지 · 계속 찍거나 PDF로 저장하세요`)}else if(t.batch){drawList();pump();if(cards.length)toast(`명함 ${cards.length}장 · 계속 찍거나 [모두 저장]을 누르세요`)}else{drawCard();requestOCR(cc)}
 }
 $('#fCam').onchange=onFiles;$('#fLib').onchange=onFiles;
 
@@ -401,48 +421,72 @@ $('#edDel').onclick=()=>{ed.del=true;history.back()};
 $('#edDone').onclick=()=>history.back();
 async function edClose(){
   const e=ed;ed=null;if(!e)return;const it=e.it,L=e.list,i=L.indexOf(it);
-  if(e.del){if(L===doc)doc.splice(i,1);else card[i]=null;URL.revokeObjectURL(it.url);L===doc?drawDoc():(drawCard(),runOCR());toast('삭제했습니다');return}
+  if(e.del){if(L===doc)doc.splice(i,1);else card[i]=null;URL.revokeObjectURL(it.url);L===doc?drawDoc():(drawCard(),requestOCR(cc));toast('삭제했습니다');return}
   if(e.rot===it.rot&&e.filter===it.filter&&JSON.stringify(e.q)===JSON.stringify(it.quad))return;
   Object.assign(it,{quad:e.q,rot:e.rot,filter:e.filter});busy('적용 중…');await sleep(40);
   try{await process(it,e.src)}finally{busy()}
-  if(L===doc)drawDoc();else{drawCard();runOCR()}
+  if(L===doc)drawDoc();else{drawCard();requestOCR(cc)}
 }
 
-/* ---------- 명함 ---------- */
-$('#goCard').onclick=()=>{go('card');drawCard()};
+/* ---------- 명함 (여러 장 연속 입력) ---------- */
+const FIELDS=['fn','org','dept','title','mobile','tel','fax','email','url','adr','note'];
+const ST={wait:['대기',''],ocr:['읽는 중',''],done:['확인','ok'],check:['확인 필요','warn'],fail:['직접 입력','warn'],saved:['저장함','']};
+const MSG={wait:'순서를 기다리는 중입니다. 앞 명함을 읽고 나면 자동으로 읽습니다.',ocr:'글자 읽는 중…',done:'읽기 완료 · 내용을 확인·수정하세요. 목록에서 [모두 저장]으로 한 번에 저장할 수 있습니다.',
+  check:'글자를 충분히 읽지 못했습니다. 밝은 곳에서 다시 찍거나 직접 입력하세요.',fail:'글자 인식을 불러오지 못했습니다(인터넷 연결 확인). 직접 입력해도 저장할 수 있습니다.',saved:'연락처 파일로 저장한 명함입니다. 고친 뒤 다시 저장할 수 있습니다.'};
+const newCard=it=>({sides:[it,null],data:{note:'명함 스캔 '+new Date().toLocaleDateString('ko-KR')},dirty:{},raw:'',state:'wait',photo:true});
+const setOcr=m=>$('#ocrStatus').textContent=m;
+$('#goCard').onclick=()=>go('cards');
+$('#cardsCam').onclick=()=>openPick(true,{kind:'card',side:0,batch:true});
+$('#cardsLib').onclick=()=>openPick(false,{kind:'card',side:0,batch:true});
+function drawList(){
+  $('#cardList').replaceChildren(...cards.map((c,i)=>{const b=document.createElement('button'),d=c.data,im=new Image(),ci=document.createElement('span'),st=document.createElement('span');
+    b.className='crow';im.alt='';im.src=(c.sides[0]||c.sides[1])?.url||'';ci.className='ci';
+    const nm=document.createElement('b'),sm=document.createElement('small');nm.textContent=d.fn||d.org||(c.state==='wait'||c.state==='ocr'?'읽는 중…':'이름 없음');
+    sm.textContent=[d.fn?d.org:'',d.mobile||d.tel,d.email].filter(Boolean).join(' · ')||`${i+1}번째 명함`;ci.append(nm,sm);
+    st.className='st '+ST[c.state][1];st.textContent=ST[c.state][0];b.append(im,ci,st);b.onclick=()=>openCard(c);return b}));
+  const n=cards.length,ok=cards.filter(c=>c.data.fn||c.data.org).length;
+$('#cardsEmpty').hidden=n>0;$('#listHead').hidden=!n;
+  $('#listCount').textContent=`명함 ${n}장 · 저장 가능 ${ok}장`;$('#cardsSave').disabled=!ok;$('#cardsSave').textContent=ok?`모두 저장 ${ok}`:'모두 저장';
+  $('#listStatus').hidden=!cards.some(c=>c.state==='wait'||c.state==='ocr');
+}
+function openCard(c){cc=c;card=c.sides;go('card');drawCard();fillForm();setOcr(c.state==='ocr'&&ocrMsg||MSG[c.state])}
+function drawCard(){$$('.side').forEach((el,i)=>{const it=card[i],img=el.querySelector('img');img.hidden=!it;if(it)img.src=it.url;el.querySelector('.ph').classList.toggle('has',!!it)})}
+function fillForm(){if(!cc)return;FIELDS.forEach(k=>$('#f_'+k).value=cc.data[k]||'');$('#f_photo').checked=cc.photo;$('#raw').textContent=cc.raw||'(아직 없음)'}
+FIELDS.forEach(k=>$('#f_'+k).addEventListener('input',e=>{if(!cc)return;cc.data[k]=e.target.value;cc.dirty[k]=1;if(cc.state==='saved')cc.state='done'}));
+$('#f_photo').onchange=e=>{if(cc)cc.photo=e.target.checked};
 $$('.side').forEach(el=>{const side=+el.dataset.side;el.addEventListener('click',e=>{const a=e.target.closest('[data-act]')?.dataset.act;
   if(a==='cam')openPick(true,{kind:'card',side});else if(a==='lib')openPick(false,{kind:'card',side});
   else if(a==='edit'){if(card[side])openEditor(card[side],card);else openPick(true,{kind:'card',side})}})});
-function drawCard(){$$('.side').forEach((el,i)=>{const it=card[i],img=el.querySelector('img');img.hidden=!it;if(it)img.src=it.url;el.querySelector('.ph').classList.toggle('has',!!it)})}
-const FIELDS=['fn','org','dept','title','mobile','tel','fax','email','url','adr','note'];
-FIELDS.forEach(k=>$('#f_'+k).addEventListener('input',e=>e.target.dataset.dirty=1));
-function resetCard(){card.forEach(it=>it&&URL.revokeObjectURL(it.url));card[0]=card[1]=null;ocrSeq++;
-  FIELDS.forEach(k=>{const el=$('#f_'+k);el.value='';delete el.dataset.dirty});$('#raw').textContent='(아직 없음)';drawCard();
-  setOcr('앞면을 찍으면 이름·전화번호·이메일을 자동으로 읽습니다. 뒷면은 필요할 때만 추가하세요.')}
-$('#cardNew').onclick=resetCard;
-const setOcr=m=>$('#ocrStatus').textContent=m;
+$('#cardDone').onclick=()=>history.back();
+$('#cardDel').onclick=()=>{if(!confirm('이 명함을 목록에서 삭제할까요?'))return;const i=cards.indexOf(cc);if(i>=0)cards.splice(i,1);cc.sides.forEach(it=>it&&URL.revokeObjectURL(it.url));cc.state='gone';cc=null;history.back();toast('삭제했습니다')};
+$('#cardsClear').onclick=()=>{if(!confirm(`명함 ${cards.length}장을 목록에서 모두 지울까요? (이미 저장한 연락처는 그대로 남습니다)`))return;
+  cards.forEach(c=>{c.state='gone';c.sides.forEach(it=>it&&URL.revokeObjectURL(it.url))});cards.length=0;drawList()};
 
-let ocrP=null,ocrSeq=0;
+let ocrP=null,ocrNow=null,ocrMsg='',ocrBusy=false;
 const OCR_STEP={'loading tesseract core':'엔진','initializing tesseract':'초기화','loading language traineddata':'한글·영문 데이터','initializing api':'준비'};
+function ocrSay(m){ocrMsg=m;if(cc&&cc===ocrNow&&view==='card')setOcr(m);const n=cards.length,d=cards.filter(c=>!['wait','ocr'].includes(c.state)).length;
+  $('#listStatus').textContent=n?`${d}/${n}장 읽음 · ${m}`:m}
 function getOCR(){return ocrP||(ocrP=(async()=>{await loadScript(TESS);
-  return Tesseract.createWorker(['kor','eng'],1,{logger:m=>{if(m.status==='recognizing text')setOcr(`글자 읽는 중 ${Math.round(m.progress*100)}%`);
-    else if(OCR_STEP[m.status])setOcr(`글자 인식 준비 중 · ${OCR_STEP[m.status]} ${Math.round((m.progress||0)*100)}% (처음 한 번만 내려받습니다)`)}})})().catch(e=>{ocrP=null;throw e}))}
-async function runOCR(){
-  const sides=card.filter(Boolean),my=++ocrSeq;if(!sides.length)return;
-  setOcr('글자 인식 준비 중…');
+  return Tesseract.createWorker(['kor','eng'],1,{logger:m=>{if(m.status==='recognizing text')ocrSay(`글자 읽는 중 ${Math.round(m.progress*100)}%`);
+    else if(OCR_STEP[m.status])ocrSay(`글자 인식 준비 중 · ${OCR_STEP[m.status]} ${Math.round((m.progress||0)*100)}% (처음 한 번만 내려받습니다)`)}})})().catch(e=>{ocrP=null;throw e}))}
+function requestOCR(c){if(!c||c.state==='gone')return;if(!c.sides.some(Boolean)){c.state='check';return}if(c.state==='ocr')c.again=true;else c.state='wait';pump();refresh(c)}
+async function pump(){if(ocrBusy)return;ocrBusy=true;try{let c;while((c=cards.find(x=>x.state==='wait')))await ocrCard(c)}finally{ocrBusy=false;drawList()}}
+function refresh(c){if(view==='cards')drawList();if(c===cc&&view==='card'){fillForm();setOcr(c.state==='ocr'&&ocrMsg||MSG[c.state])}}
+async function ocrCard(c){
+  c.state='ocr';ocrNow=c;refresh(c);ocrSay('글자 인식 준비 중…');
   try{
     const w=await getOCR(),lines=[];
-    for(const it of sides){const{data}=await w.recognize(it.blob);
+    for(const it of c.sides.filter(Boolean)){const{data}=await w.recognize(it.blob);
       for(const l of data.lines||[]){const h=l.bbox.y1-l.bbox.y0,ws=(l.words||[]).filter(w=>w.text.trim());let seg=[];
-        const push=()=>{if(!seg.length)return;const t=seg.map(w=>w.text).join(' ').trim(),c=seg.reduce((a,w)=>a+w.confidence,0)/seg.length;seg=[];if(t&&(c>=30||/[\d@]/.test(t)))lines.push({t,h})};
+        const push=()=>{if(!seg.length)return;const t=seg.map(w=>w.text).join(' ').trim(),cf=seg.reduce((a,w)=>a+w.confidence,0)/seg.length;seg=[];if(t&&(cf>=30||/[\d@]/.test(t)))lines.push({t,h})};
         if(!ws.length){if(l.text.trim())lines.push({t:l.text.trim(),h});continue}
         ws.forEach((w,i)=>{if(i&&w.bbox.x0-ws[i-1].bbox.x1>h*1.2)push();seg.push(w)});push()}}
-    if(my!==ocrSeq)return;
-    $('#raw').textContent=lines.map(l=>l.t).join('\n')||'(읽은 글자 없음)';
-    const r=parseCard(lines);if(!r.note)r.note='명함 스캔 '+new Date().toLocaleDateString('ko-KR');
-    FIELDS.forEach(k=>{const el=$('#f_'+k);if(!el.dataset.dirty)el.value=r[k]||''});
-    setOcr(r.fn||r.mobile||r.email?'읽기 완료 · 내용을 확인·수정한 뒤 [연락처에 추가]를 누르세요':'글자를 충분히 읽지 못했습니다. 밝은 곳에서 다시 찍거나 직접 입력하세요.');
-  }catch(e){console.error(e);if(my===ocrSeq)setOcr('글자 인식을 불러오지 못했습니다(인터넷 연결 확인). 직접 입력해도 연락처에 추가할 수 있습니다.')}
+    if(c.state==='gone')return;
+    c.raw=lines.map(l=>l.t).join('\n')||'(읽은 글자 없음)';const r=parseCard(lines);
+    FIELDS.forEach(k=>{if(!c.dirty[k]&&(r[k]||k!=='note'))c.data[k]=r[k]||''});
+    c.state=r.fn||r.mobile||r.email?'done':'check';
+  }catch(e){console.error(e);if(c.state!=='gone')c.state='fail'}
+  ocrNow=null;if(c.again&&c.state!=='gone'){c.again=false;c.state='wait'}refresh(c);
 }
 
 // 명함 OCR 결과 → 항목 분류 (한국 명함 관례 기준)
@@ -505,9 +549,8 @@ async function photoB64(it){
   x.fillStyle='#fff';x.fillRect(0,0,S,S);x.drawImage(img,(S-img.width*k)/2,(S-img.height*k)/2,img.width*k,img.height*k);
   return c.toDataURL('image/jpeg',.75).split(',')[1];
 }
-$('#cardSave').onclick=async()=>{
-  const g=k=>$('#f_'+k).value.trim(),fn=g('fn');
-  if(!fn&&!g('org')){toast('이름이나 회사 중 하나는 입력해 주세요');$('#f_fn').focus();return}
+async function vcard(c){
+  const d=c.data,g=k=>(d[k]||'').trim(),fn=g('fn');if(!fn&&!g('org'))return null;
   const esc=s=>s.replace(/\\/g,'\\\\').replace(/\r?\n/g,'\\n').replace(/([,;])/g,'\\$1'),[fam,giv]=splitName(fn||g('org'));
   const V=['BEGIN:VCARD','VERSION:3.0',`N;CHARSET=UTF-8:${esc(fam)};${esc(giv)};;;`,`FN;CHARSET=UTF-8:${esc(fn||g('org'))}`];
   if(g('org')||g('dept'))V.push(`ORG;CHARSET=UTF-8:${esc(g('org'))}${g('dept')?';'+esc(g('dept')):''}`);
@@ -519,11 +562,22 @@ $('#cardSave').onclick=async()=>{
   if(g('url'))V.push(`URL:${g('url')}`);
   if(g('adr'))V.push(`ADR;TYPE=WORK;CHARSET=UTF-8:;;${esc(g('adr'))};;;;`);
   if(g('note'))V.push(`NOTE;CHARSET=UTF-8:${esc(g('note'))}`);
-  if($('#f_photo').checked&&(card[0]||card[1])){try{V.push(('PHOTO;ENCODING=b;TYPE=JPEG:'+await photoB64(card[0]||card[1])).match(/.{1,74}/g).join('\r\n '))}catch(e){}}
-  V.push('END:VCARD');
-  saveBlob(new Blob([V.join('\r\n')+'\r\n'],{type:'text/x-vcard'}),'contact_'+stamp()+'.vcf');
-  toast('다운로드 알림(또는 파일 앱)에서 .vcf를 열면 연락처 저장 화면이 뜹니다',6000);
-};
+  const ph=c.sides[0]||c.sides[1];
+  if(c.photo&&ph){try{V.push(('PHOTO;ENCODING=b;TYPE=JPEG:'+await photoB64(ph)).match(/.{1,74}/g).join('\r\n '))}catch(e){}}
+  V.push('END:VCARD');return V.join('\r\n')+'\r\n';
+}
+async function saveContacts(list){
+  busy('연락처 파일 만드는 중…');const out=[];try{for(const c of list){const v=await vcard(c);if(v){out.push(v);c.state='saved'}}}finally{busy()}
+  if(!out.length){toast('이름이나 회사 중 하나는 입력해 주세요');return 0}
+  saveBlob(new Blob(out,{type:'text/x-vcard'}),`contacts_${out.length}_${stamp()}.vcf`);
+  toast(`${out.length}명 저장 · 다운로드 알림(또는 내 파일)에서 .vcf를 열면 한 번에 연락처로 가져옵니다`,6000);return out.length;
+}
+$('#cardSave').onclick=async()=>{if(!cc)return;if(!(cc.data.fn||'').trim()&&!(cc.data.org||'').trim()){toast('이름이나 회사 중 하나는 입력해 주세요');$('#f_fn').focus();return}
+  await saveContacts([cc]);refresh(cc)};
+$('#cardsSave').onclick=async()=>{const reading=cards.filter(c=>c.state==='wait'||c.state==='ocr').length;
+  if(reading&&!confirm(`아직 ${reading}장을 읽는 중입니다. 읽은 명함만 먼저 저장할까요?`))return;
+  const n=await saveContacts(cards.filter(c=>!['wait','ocr'].includes(c.state)));const skip=cards.length-reading-n;
+  if(skip>0)setTimeout(()=>toast(`이름·회사가 비어 있는 ${skip}장은 빼고 저장했습니다`,4000),6200);drawList()};
 
 if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js');
 </script>
