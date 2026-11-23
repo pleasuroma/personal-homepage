@@ -388,6 +388,7 @@ const QS=[
 {k:'alone',t:'하루 중 반려견이 혼자 있게 될 시간은 얼마나 되나요?',o:[['s','4시간 이하','','혼자 4시간 이하'],['m','4~8시간','','혼자 4~8시간'],['l','8시간 이상','','혼자 8시간 이상']]},
 {k:'walk',t:'입양 후 하루에 함께 산책할 수 있는 시간은 얼마나 되나요?',o:[['s','30분 미만','','산책 30분 미만'],['m','30분~1시간','','산책 30분~1시간'],['l','1시간 이상','','산책 1시간 이상']]},
 {k:'exp',t:'반려견을 키워 본 적이 있나요?',o:[['no','처음 키워요','','첫 반려견'],['yes','이전에 키워 본 적 있어요','','양육 경험 있음']]},
+{k:'train',t:'반려견과 어느 정도까지 교육해 보고 싶나요?',o:[['basic','기본 예절이면 충분해요','배변, 앉아, 기다려 정도','교육 기본만'],['mid','산책 매너와 사회화까지','다른 사람·개와 어울리는 법까지 꼼꼼히','교육 산책 매너까지'],['high','트릭·어질리티까지 즐기고 싶어요','다양한 훈련을 함께 배우고 싶어요','교육 다양하게']]},
 {k:'shed',t:'털 빠짐과 알레르기는 어느 정도까지 괜찮나요?',o:[['ok','상관없어요','털이 많이 빠져도 괜찮아요','털 상관없음'],['mid','적게 빠지면 좋겠어요','가벼운 청소 부담 정도는 괜찮아요','털 적게'],['sens','거의 빠지지 않아야 해요','본인이나 가족에게 알레르기가 있어요','털 거의 없게']]},
 {k:'kid',t:'함께 사는 가족 중 초등학생 이하 자녀가 있나요?',o:[['no','없어요','','어린 자녀 없음'],['yes','있어요','','어린 자녀 있음']]},
 {k:'groom',t:'빗질과 미용에 쓸 수 있는 시간은 어느 정도인가요?',o:[['low','주 1회 이하','털 관리가 간단한 견종이 좋아요','빗질 주 1회 이하'],['mid','주 2~3회 빗질','미용은 가끔 할 수 있어요','빗질 주 2~3회'],['high','매일 빗질, 정기 미용 가능','4~6주마다 미용해도 괜찮아요','매일 빗질·정기 미용']]}];
@@ -403,6 +404,9 @@ function score(d){
   add({s:0,m:Math.max(0,d.a-4)*.1,l:Math.max(0,d.a-3)*.12}[st.alone],'오래 혼자 기다리면 외로움에 마음이 아플 수 있어요');
   add({s:Math.max(0,d.e-2)*.12,m:Math.max(0,d.e-3)*.12,l:0}[st.walk],'이 아이가 바라는 산책이 지금 함께해 줄 수 있는 시간보다 길어요');
   if(st.exp==='no'){add(Math.max(0,3-d.t)*.1+Math.max(0,d.i-3)*.06,'자기 생각이 뚜렷해 첫 보호자에겐 교육이 쉽지 않아요');add(d.z===3&&d.e>=4?.1:0,'힘이 세고 활발해 첫 보호자에겐 벅찰 수 있어요')}
+  if(st.train==='basic')add(d.t>=4&&d.p>=5&&d.e>=4?(d.e>=5?.18:.1):0,'영리하고 일 욕심이 많아, 머리 쓸 일이 없으면 지루해서 문제 행동이 생기기 쉬워요');
+  if(st.train==='mid')add(Math.max(0,2-d.t)*.08,'자기 생각이 뚜렷해 산책 매너 교육에 인내가 필요해요');
+  if(st.train==='high'){add(Math.max(0,3-d.t)*.1,'훈련 진도가 더뎌 함께 배우는 재미를 느끼기 어려울 수 있어요');if(d.t>=5)extra.push('새로운 걸 빨리 배워 함께 훈련하는 재미가 커요')}
   add({ok:0,mid:Math.max(0,d.s-3)*.12,sens:Math.max(0,d.s-1)*.1}[st.shed],'털이 많이 빠져 알레르기와 청소 부담이 커요');
   if(st.kid==='yes')add(Math.max(0,3-d.k)*.15,'어린아이와 지낼 땐 세심하게 거리를 지켜 줘야 해요');
   add({low:Math.max(0,d.g-2)*.1,mid:Math.max(0,d.g-3)*.12,high:0}[st.groom],'빗질과 정기 미용에 시간과 비용이 꽤 들어요');
@@ -420,9 +424,9 @@ const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f
 const nav=(a,b,mid,okPrev,okNext)=>`<nav class="nav"><button type="button" class="ghost" data-act="${a}"${okPrev?'':' disabled'}>이전</button>${mid}<button type="button" class="ghost" data-act="${b}"${okNext?'':' disabled'}>다음</button></nav>`;
 
 function intro(){return `<div class="eyebrow">국내에서 사랑받는 견종 100종</div><h1>절대 키우면 안 되는 강아지, 그리고 나와 맞는 강아지</h1>
-<p class="lead">MBTI와 지금의 삶을 담은 11개의 질문으로, 100종을 살펴 크기별로 피해야 할 견종 3마리씩, 그리고 흔한 견종부터 보기 드문 견종까지 나와 잘 맞는 6마리를 찾아드려요.</p>
+<p class="lead">MBTI와 지금의 삶을 담은 12개의 질문으로, 100종을 살펴 크기별로 피해야 할 견종 3마리씩, 그리고 흔한 견종부터 보기 드문 견종까지 나와 잘 맞는 6마리를 찾아드려요.</p>
 <div class="tag"><span class="t">MBTI</span><span class="kw sub">성향 · 생활 · 100종</span></div>
-<div class="facts"><span><b>11</b>문항</span><span><b>100</b>견종</span><span><b>6</b>장 결과</span></div>
+<div class="facts"><span><b>12</b>문항</span><span><b>100</b>견종</span><span><b>6</b>장 결과</span></div>
 <button type="button" class="cta big" data-act="start"><span>나와 맞는 강아지 찾기</span><i aria-hidden="true">→</i></button><p class="tap">버튼을 눌러 시작해요 · 약 1분</p><div class="grow"></div>
 <p class="hint">끝까지 함께할 수 있는 아이를 고르는 일, 그게 유기를 막는 가장 따뜻한 첫걸음이에요.</p>`}
 
