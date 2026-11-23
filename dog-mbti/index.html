@@ -410,9 +410,19 @@ function score(d){
   add({ok:0,mid:Math.max(0,d.s-3)*.12,sens:Math.max(0,d.s-1)*.1}[st.shed],'털이 많이 빠져 알레르기와 청소 부담이 커요');
   if(st.kid==='yes')add(Math.max(0,3-d.k)*.15,'어린아이와 지낼 땐 세심하게 거리를 지켜 줘야 해요');
   add({low:Math.max(0,d.g-2)*.1,mid:Math.max(0,d.g-3)*.12,high:0}[st.groom],'빗질과 정기 미용에 시간과 비용이 꽤 들어요');
+  // 보호자의 여유와 견종의 필요가 맞을 때 더해 주는 점수 (최대 12점)
+  let fit=0;const F=(c,v,m)=>{if(c){fit+=v;if(m)extra.push(m)}};
+  F(st.walk==='l'&&d.e>=4,6,'매일 넉넉한 산책이 이 아이에게 딱 맞아요');
+  F(st.walk==='s'&&d.e<=2,4,'짧은 산책으로도 충분히 만족하는 아이예요');
+  F(st.train==='high'&&d.t>=5,6);
+  F(st.groom==='high'&&d.g>=4,3,'정성껏 가꿔 줄수록 더 빛나는 아이예요');
+  F(st.home==='house'&&d.z===3,4,'마당에서 마음껏 뛰놀 수 있어요');
+  F(st.alone==='s'&&d.a>=4,4,'곁에 오래 있어 주는 보호자를 무척 좋아해요');
+  F(st.kid==='yes'&&d.k>=5,4,'아이들과도 잘 어울려요');
+  fit=Math.min(fit,12);
   const pros=dims.filter(x=>x[1]>=.6).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>WHY[x[0]]).concat(extra);
   if(!pen)pros.unshift('지금의 생활 그대로 이 아이를 맞이할 수 있어요');
-  return{d,mb,sc:Math.round(100*(.35*mb+.65*Math.max(0,1-pen))),pros:pros.length?pros.slice(0,3):[FB],cons:cons.sort((a,b)=>b[0]-a[0]).map(x=>x[1])};
+  return{d,mb,sc:Math.round((100*(.35*mb+.65*Math.max(0,1-pen))+fit)*99/112),pros:pros.length?pros.slice(0,3):[FB],cons:cons.sort((a,b)=>b[0]-a[0]).map(x=>x[1])};
 }
 const results=()=>R||(R=B.map(score).sort((a,b)=>b.sc-a.sc||a.d.pop-b.d.pop||b.mb-a.mb));
 const type=()=>[S.st.m0,S.st.m1,S.st.m2,S.st.m3];
