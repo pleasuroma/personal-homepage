@@ -130,6 +130,7 @@ h1,h2,h3{font-weight:700;letter-spacing:-.01em}h1{font-size:clamp(28px,7vw,40px)
 @keyframes pulse{0%,100%{box-shadow:0 10px 30px -10px rgba(150,180,163,.7),0 0 0 0 rgba(207,223,212,.45)}50%{box-shadow:0 10px 30px -10px rgba(150,180,163,.7),0 0 0 10px rgba(207,223,212,0)}}
 @keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
 @media (prefers-reduced-motion:reduce){.pg>*,.opt,.rows>div,.det,.grp>.pc,.cta.big,.cta.big i,.cta.big::after,.tag::after{animation:none}}
+.dz{grid-column:1/-1;margin:0;font-size:13px;line-height:1.5;color:var(--muted)}.dz span{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--teal);border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-right:6px;vertical-align:1px}
 </style>
 </head>
 <body>
@@ -245,6 +246,108 @@ const B=`말티즈|1|3|5|3|1|3|4|1|4|2|3|사람 곁을 좋아하는 애교쟁이
 // 개 친화·고양이 친화(사냥 본능 반영) 두 자리씩, B와 같은 순서
 const DC='44 44 33 23 55 55 33 11 43 55 54 22 32 44 53 33 32 44 53 51 55 34 44 32 42 44 21 44 44 55 32 32 44 55 55 34 45 33 11 33 33 34 54 21 12 34 33 42 33 32 44 55 34 42 32 22 21 22 22 22 11 22 22 54 31 33 31 42 44 43 22 44 44 55 12 22 44 44 31 31 41 43 55 54 33 44 33 54 32 33 44 54 22 43 43 55 22 41 11 22'.split(' ');
 B.forEach((d,j)=>{d.dg=+DC[j][0];d.ct=+DC[j][1]});
+// 대표 유전·호발 질환 (견종 이름 기준, 쉼표로 구분)
+const DZ=Object.fromEntries(`말티즈|슬개골 탈구,이첨판 폐쇄부전증,괴사성 뇌수막뇌염
+토이 푸들|슬개골 탈구,레그-칼베-페르테스병,진행성 망막 위축증
+포메라니안|기관 허탈,슬개골 탈구,탈모 X
+치와와|수두증,슬개골 탈구,이첨판 폐쇄부전증
+시츄|단두종 기도 증후군,건성 각결막염,추간판 탈출증
+비숑 프리제|아토피 피부염,요로결석,백내장
+요크셔 테리어|기관 허탈,간문맥 단락,슬개골 탈구
+진돗개|갑상선 기능 저하증,포도막피부 증후군
+웰시 코기|추간판 탈출증,퇴행성 척수병증,고관절 이형성증
+골든 리트리버|고관절 이형성증,종양(혈관육종·림프종),아토피 피부염
+래브라도 리트리버|고관절·팔꿈치 이형성증,운동 유발성 허탈,진행성 망막 위축증
+시바견|아토피 피부염,녹내장,슬개골 탈구
+닥스훈트|추간판 탈출증,진행성 망막 위축증,쿠싱 증후군
+프렌치 불독|단두종 기도 증후군,척추 기형(반척추),아토피 피부염
+비글|특발성 간질,갑상선 기능 저하증,추간판 탈출증
+보더 콜리|콜리 안구 기형,특발성 간질,고관절 이형성증
+미니어처 슈나우저|고지혈증,췌장염,요로결석
+재패니즈 스피츠|슬개골 탈구,유루증(눈물 과다)
+사모예드|고관절 이형성증,유전성 신염,당뇨병
+시베리안 허스키|유전성 백내장,각막 이영양증,아연 반응성 피부병
+퍼그|단두종 기도 증후군,괴사성 뇌수막뇌염,색소성 각막염
+페키니즈|단두종 기도 증후군,추간판 탈출증,각막 궤양
+파피용|슬개골 탈구,진행성 망막 위축증
+미니어처 핀셔|레그-칼베-페르테스병,슬개골 탈구
+이탈리안 그레이하운드|앞다리 골절,치주 질환,진행성 망막 위축증
+셔틀랜드 쉽독|콜리 안구 기형,MDR1 약물 민감성,담낭 점액종
+잭 러셀 테리어|원발성 수정체 탈구,레그-칼베-페르테스병,선천성 난청
+보스턴 테리어|단두종 기도 증후군,각막 궤양,비만세포종
+아메리칸 코커 스패니얼|만성 외이염,원발성 녹내장,면역매개성 용혈성 빈혈
+카발리에 킹 찰스 스패니얼|이첨판 폐쇄부전증,척수공동증
+베들링턴 테리어|구리 축적 간질환,망막 이형성증
+웨스트 하이랜드 화이트 테리어|아토피 피부염,특발성 폐섬유증,두개하악골증
+스탠다드 푸들|애디슨병,위확장-염전,피지선염
+말티푸|슬개골 탈구,이첨판 폐쇄부전증 등 부모 견종 질환
+꼬똥 드 툴레아|슬개골 탈구,다발성 망막병증
+라사 압소|가족성 신장 이형성증,건성 각결막염,진행성 망막 위축증
+재패니즈 친|단두종 기도 증후군,슬개골 탈구,이첨판 폐쇄부전증
+삽살개|알려진 유전 질환 자료가 적어요(고관절 검진 권장)
+풍산개|알려진 유전 질환 자료가 적어요(고관절 검진 권장)
+저먼 셰퍼드|고관절·팔꿈치 이형성증,퇴행성 척수병증,외분비 췌장 기능 부전
+도베르만|확장성 심근병증,폰빌레브란트병,워블러 증후군
+그레이트 피레니즈|고관절 이형성증,골육종,위확장-염전
+버니즈 마운틴 독|조직구 육종,고관절·팔꿈치 이형성증,퇴행성 척수병증
+알래스칸 말라뮤트|고관절 이형성증,다발성 신경병증,갑상선 기능 저하증
+차우차우|안검 내반증,고관절 이형성증,낙엽상 천포창
+잉글리시 불독|단두종 기도 증후군,체리아이,고관절 이형성증
+오스트레일리안 셰퍼드|MDR1 약물 민감성,유전성 백내장,특발성 간질
+휘핏|이첨판 폐쇄부전증,마취제 민감성
+아메리칸 불리|고관절 이형성증,아토피 피부염,짧은 주둥이로 인한 호흡 문제
+실키 테리어|슬개골 탈구,레그-칼베-페르테스병,기관 허탈
+미니어처 푸들|슬개골 탈구,진행성 망막 위축증,쿠싱 증후군
+하바니즈|슬개골 탈구,백내장,간문맥 단락
+브뤼셀 그리폰|척수공동증,단두종 기도 증후군,슬개골 탈구
+보더 테리어|간질양 경련 증후군(CECS),담낭 점액종
+케언 테리어|안구 멜라닌증,간문맥 단락,두개하악골증
+스코티시 테리어|방광암(이행상피암),스코티 경련,폰빌레브란트병
+와이어 폭스 테리어|원발성 수정체 탈구,아토피 피부염,레그-칼베-페르테스병
+에어데일 테리어|고관절 이형성증,갑상선 기능 저하증,계절성 측복부 탈모
+불테리어|선천성 난청,유전성 신장 질환,강박적 꼬리 쫓기
+스태퍼드셔 불테리어|유전성 백내장,L-2-하이드록시글루타르산뇨증,아토피 피부염
+아키타|포도막피부 증후군,피지선염,고관절 이형성증
+경주개 동경이|알려진 유전 질환 자료가 적어요(정기 검진 권장)
+샤페이|샤페이 열,아밀로이드증,안검 내반증
+바셋 하운드|원발성 녹내장,추간판 탈출증,위확장-염전
+바센지|판코니 증후군,피루브산 키나아제 결핍증,진행성 망막 위축증
+달마시안|선천성 난청,요산 결석,아토피 피부염
+와이마라너|위확장-염전,고관절 이형성증,비대성 골이영양증
+비즐라|특발성 간질,고관절 이형성증,피지선염
+잉글리시 코커 스패니얼|유전성 신염,진행성 망막 위축증,만성 외이염
+잉글리시 스프링어 스패니얼|PFK 결핍증,진행성 망막 위축증,고관절 이형성증
+로트와일러|골육종,고관절·팔꿈치 이형성증,대동맥판 하부 협착
+그레이트 데인|위확장-염전,확장성 심근병증,워블러 증후군
+세인트 버나드|고관절 이형성증,골육종,안검 내반·외반증
+뉴펀들랜드|대동맥판 하부 협착,시스틴뇨증,고관절 이형성증
+케인 코르소|고관절 이형성증,안검 이상,위확장-염전
+벨지안 말리노이즈|특발성 간질,고관절 이형성증,유전성 소뇌 운동실조
+러프 콜리|MDR1 약물 민감성,콜리 안구 기형,피부근염
+올드 잉글리시 쉽독|고관절 이형성증,면역매개성 용혈성 빈혈,MDR1 약물 민감성
+아프간 하운드|백내장,갑상선 기능 저하증,유미흉
+보르조이|위확장-염전,심근병증,갑상선 기능 저하증
+그레이하운드|골육종,마취제 민감성,치주 질환
+화이트 스위스 셰퍼드|MDR1 약물 민감성,고관절·팔꿈치 이형성증,퇴행성 척수병증
+골든두들|고관절 이형성증,진행성 망막 위축증,애디슨병 등 부모 견종 질환
+래브라두들|고관절·팔꿈치 이형성증,진행성 망막 위축증,애디슨병 등 부모 견종 질환
+아펜핀셔|슬개골 탈구,레그-칼베-페르테스병,고관절 이형성증
+차이니즈 크레스티드|원발성 수정체 탈구,진행성 망막 위축증,치아 결손
+저먼 스피츠|슬개골 탈구,탈모 X
+키스혼드|원발성 부갑상선 기능 항진증,팔로 4징,특발성 간질
+랫 테리어|원발성 수정체 탈구,슬개골 탈구,레그-칼베-페르테스병
+웰시 코기 카디건|진행성 망막 위축증,퇴행성 척수병증,추간판 탈출증
+아메리칸 에스키모 독|진행성 망막 위축증,슬개골 탈구,당뇨병
+비어디드 콜리|애디슨병,대칭성 루푸스양 조갑염,고관절 이형성증
+자이언트 슈나우저|갑상선 기능 저하증,발가락 편평상피암,고관절 이형성증
+라고토 로마뇰로|양성 소아 간질,리소좀 축적병,고관절 이형성증
+미니어처 오스트레일리안 셰퍼드|MDR1 약물 민감성,유전성 백내장,콜리 안구 기형
+코카푸|슬개골 탈구,진행성 망막 위축증,만성 외이염 등 부모 견종 질환
+스탠다드 슈나우저|고관절 이형성증,갑상선 기능 저하증
+저먼 쇼트헤어드 포인터|위확장-염전,고관절 이형성증,폰빌레브란트병
+도고 아르헨티노|선천성 난청,고관절 이형성증
+미니어처 불테리어|원발성 수정체 탈구,선천성 난청,유전성 신장 질환`.split('\n').map(l=>{const [k,v]=l.split('|');return [k,v.split(',')]}));
+B.forEach(d=>d.dz=DZ[d.n]||[]);
 const n=x=>(x-1)/4,r=x=>(5-x)/4;
 const DIM={E:d=>.6*n(d.f)+.4*n(d.e),I:d=>.5*r(d.b)+.3*r(d.e)+.2*r(d.f),S:d=>.5*r(d.g)+.5*r(d.p),N:d=>.7*n(d.p)+.3*n(d.t),T:d=>.7*n(d.i)+.3*r(d.a),F:d=>.7*n(d.a)+.3*n(d.f),J:d=>n(d.t),P:d=>.4*r(d.g)+.3*n(d.i)+.3*n(d.p)};
 const WHY={E:'사람과 친구를 반기는 아이라, 함께 걷는 길마다 새로운 인연이 생겨요',I:'조용하고 차분한 아이라, 고요한 나의 시간을 함께 지켜 줘요',S:'한결같고 손이 덜 가는 아이라, 소박한 일상에 자연스레 스며들어요',N:'호기심 가득한 아이라, 매일 새로운 놀이를 함께 꿈꿀 수 있어요',T:'스스로 설 줄 아는 아이라, 서로의 공간을 존중하며 담백하게 사랑할 수 있어요',F:'애정 표현이 풍부한 아이라, 마음을 나누는 기쁨이 매일 쌓여요',J:'배우기를 좋아하는 아이라, 함께 만든 약속과 루틴이 단단해져요',P:'적응력이 좋은 아이라, 즉흥적인 하루에도 기꺼이 함께해요'};
@@ -287,7 +390,8 @@ const type=()=>[S.st.m0,S.st.m1,S.st.m2,S.st.m3];
 const ring=v=>`<div class="ring" style="--v:${v}"><span>${v}<small>%</small></span></div>`;
 const MET=[['운동량','e'],['외로움 탐','a'],['털 빠짐','s'],['짖음','b'],['털 관리','g'],['훈련 쉬움','t'],['개 친구','dg'],['고양이 친구','ct']];
 const li=(c,a)=>a.map(t=>`<li class="${c}">${t}</li>`).join('');
-const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f(x.pros).slice(0,1))+li('c',[x.d.warn]):li('c',[x.d.warn].concat(f(x.cons).slice(0,1)));return `<div><h3><span class="no">${j}</span>${x.d.n}</h3><span class="v">${x.sc}%</span><p class="note" style="grid-column:1/-1;margin:0">${x.d.note}</p><ul class="pc">${L}</ul></div>`};
+const dzl=d=>`<p class="dz"><span>유전·호발 질환</span>${d.dz.join(' · ')}</p>`;
+const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f(x.pros).slice(0,1))+li('c',[x.d.warn]):li('c',[x.d.warn].concat(f(x.cons).slice(0,1)));return `<div><h3><span class="no">${j}</span>${x.d.n}</h3><span class="v">${x.sc}%</span><p class="note" style="grid-column:1/-1;margin:0">${x.d.note}</p>${dzl(x.d)}<ul class="pc">${L}</ul></div>`};
 const nav=(a,b,mid,okPrev,okNext)=>`<nav class="nav"><button type="button" class="ghost" data-act="${a}"${okPrev?'':' disabled'}>이전</button>${mid}<button type="button" class="ghost" data-act="${b}"${okNext?'':' disabled'}>다음</button></nav>`;
 
 function intro(){return `<div class="eyebrow">국내에서 사랑받는 견종 100종</div><h1>절대 키우면 안 되는 강아지, 그리고 나와 맞는 강아지</h1>
@@ -309,7 +413,7 @@ const pick=(R,z,bad)=>{const a=R.filter(x=>x.d.z===z);return bad?a.slice(-3).rev
 const group=(R,bad)=>{const G=[1,2,3].map(z=>pick(R,z,bad)),cnt={};G.flat().forEach(x=>(bad?x.cons:x.pros).forEach(t=>cnt[t]=(cnt[t]||0)+1));
  const com=Object.keys(cnt).filter(t=>cnt[t]>=3).sort((a,b)=>cnt[b]-cnt[a]).slice(0,3),skip=new Set(com);
  return (com.length?`<div class="com"><h3>${bad?'여러 견종에 공통으로 걸리는 점':'여러 견종에 공통으로 잘 맞는 점'}</h3><ul class="pc">${li(bad?'c':'p',com)}</ul></div>`:'')+G.map((a,k)=>{const L=bad?'cons':'pros',gc=a[0][L].filter(t=>!skip.has(t)&&a.every(x=>x[L].includes(t))).slice(0,1),sk=new Set([...skip,...gc]);return `<section class="grp"><h3 class="gh">${SIZE[k+1]}견<small>${SZ[k+1]}</small></h3>${gc.length?`<ul class="pc">${li(bad?'c':'p',gc.map(t=>SIZE[k+1]+'견 공통: '+t))}</ul>`:''}${!bad&&a[0].sc<50?'<p class="hint">지금 생활에선 이 크기의 견종이 전반적으로 쉽지 않아요.</p>':''}<div class="rows${bad?'':' good'}">${a.map((x,j)=>row(x,j+1,!bad,sk)).join('')}</div></section>`}).join('')};
-const detail=(x,j)=>{const d=x.d;return `<article class="det"><div class="dh"><h3><span class="no">${j}</span>${d.n}</h3><span class="v">${x.sc}%</span></div><p class="note">${d.note}</p>
+const detail=(x,j)=>{const d=x.d;return `<article class="det"><div class="dh"><h3><span class="no">${j}</span>${d.n}</h3><span class="v">${x.sc}%</span></div><p class="note">${d.note}</p>${dzl(d)}
 <div class="mt">${MET.map(([l,k])=>`<span>${l}</span><div class="s5">${[1,2,3,4,5].map(i=>`<i${i<=d[k]?' class="on"':''}></i>`).join('')}</div>`).join('')}</div>
 <ul class="pc">${li('p',x.pros)}${li('c',x.cons.slice(0,2).concat(d.warn))}</ul></article>`};
 
@@ -317,11 +421,11 @@ function rPage(){const R=results(),T=type(),i=S.ri;let h='';
 if(i===0)h=`<div class="alert"><div class="eyebrow">경고 · 지금의 생활 기준</div><h2>${T.join('')}인 당신이<br>절대 키우면 안 되는 견종</h2></div><p class="hint">아이들의 잘못이 아니에요. 지금의 생활과 맞지 않을 뿐이에요. 크기별로 3마리씩 골랐어요.</p>${group(R,1)}<p class="hint">그렇다면 나와 맞는 아이는 누구일까요? 다음 장에서 만나요.</p>`;
 else if(i===1)h=`<div class="tag"><span class="t">${T.join('')}</span><span class="kw">${T.map(c=>`<span>${KW[c]}</span>`).join('')}</span></div><h2>나와 잘 맞는 견종</h2>
  <div class="chips">${QS.slice(4).map(q=>`<span>${q.o.find(o=>o[0]===S.st[q.k])[3]}</span>`).join('')}</div>${group(R,0)}<p class="hint">크기별로 자세히 보려면 다음 장으로 넘겨 주세요.</p>`;
-else if(i<=4){const z=i-1;h=`<div class="eyebrow">잘 맞는 견종 · ${SIZE[z]}견 ${SZ[z]}</div><h2>${SIZE[z]}견 TOP 3 자세히</h2><div>${pick(R,z,0).map((x,j)=>detail(x,j+1)).join('')}</div>`}
+else if(i<=4){const z=i-1;h=`<div class="eyebrow">잘 맞는 견종 · ${SIZE[z]}견 ${SZ[z]}</div><h2>${SIZE[z]}견 TOP 3 자세히</h2><p class="hint">유전·호발 질환은 그 견종에서 상대적으로 잘 나타나는 질환이에요. 모든 아이에게 생기는 건 아니에요.</p><div>${pick(R,z,0).map((x,j)=>detail(x,j+1)).join('')}</div>`}
 else h=`<div class="eyebrow">입양 전 약속</div><h2>평생을 약속하기 전에, 마지막으로 물어봐요</h2>
  <ul class="chk"><li>15년 남짓한 이 아이의 일생을 끝까지 함께할 수 있나요?</li><li>사료와 병원, 미용까지 매달 드는 비용을 감당할 수 있나요?</li><li>이사, 결혼, 출산, 이직으로 삶이 바뀌어도 이 아이의 자리는 그대로인가요?</li><li>생후 2개월이 지나면 동물등록을 꼭 해 주세요.</li></ul>
  <div><h3 style="margin-bottom:4px">사지 말고, 먼저 만나 주세요</h3><p class="hint">보호소에도 이 목록 속 견종과 세상에 하나뿐인 믹스견들이 가족을 기다리고 있어요. <a href="https://www.animal.go.kr" target="_blank" rel="noopener">국가동물보호정보시스템</a>, <a href="https://pawinhand.kr" target="_blank" rel="noopener">포인핸드</a>에서 만날 수 있어요.</p></div>
- <p class="hint">결과는 견종의 일반적인 경향을 담은 참고 자료예요. 같은 견종이라도 아이마다 성격이 모두 다르니, 꼭 직접 만나 보고 수의사·훈련사와 상담해 주세요.</p>
+ <p class="hint">결과는 견종의 일반적인 경향을 담은 참고 자료예요. 같은 견종이라도 아이마다 성격이 모두 다르니, 꼭 직접 만나 보고 수의사·훈련사와 상담해 주세요. 분양을 받는다면 부모견의 유전자·건강 검사 여부도 꼭 확인해 주세요.</p>
  <div class="btns"><button type="button" class="cta" data-act="restart">처음부터 다시</button></div>`;
 return h+`<div class="grow"></div>`+nav('rprev','rnext',`<div class="dots">${RL.map((l,j)=>`<button type="button" data-act="dot" data-i="${j}" aria-label="${l}" aria-current="${j===i}"></button>`).join('')}</div>`,i>0,i<RL.length-1)}
 
