@@ -454,10 +454,17 @@ const TIER=[['흔한 견종','국내에서 많이 키워요'],['가끔 만나는
 // 추천 6마리를 고를 때만 쓰는 가산점 (화면의 %와 비추천에는 쓰지 않아요)
 // 국내에서 가장 많이 키우는 12종이 각각 비슷한 빈도(약 20%)로 나오도록 맞춘 값이에요.
 const PICK_BONUS={"말티즈":27,"토이 푸들":14,"포메라니안":33,"치와와":22,"시츄":7,"비숑 프리제":23,"진돗개":22,"골든 리트리버":23,"요크셔 테리어":21,"웰시 코기 펨브로크":14,"닥스훈트":17,"시바견":19};
-const adj=x=>x.sc+(PICK_BONUS[x.d.n]||0);
+// 재미를 위해 결과가 다양하게 나오도록 하는 장치 (뽑을 때만 쓰고 화면의 %는 실제 점수 그대로예요)
+// 1) 너무 자주 나오던 견종의 순위를 살짝 낮춰요
+const REC_ADJ={"보스턴 테리어":-10,"휘핏":-14,"그레이하운드":-3,"잉글리시 불독":-6,"아메리칸 불리":-3,"샤페이":-2};
+const AVO_ADJ={"셔틀랜드 쉽독":7,"시베리안 허스키":20,"아프간 하운드":18,"알래스칸 말라뮤트":13,"포메라니안":6,"차우차우":18,"사모예드":20,"그레이트 피레니즈":6,"진돗개":11,"페키니즈":9,"실키 테리어":3,"비글":4,"보더 콜리":6,"오스트레일리안 셰퍼드":5,"풍산개":3,"올드 잉글리시 쉽독":2};
+// 2) 점수가 비슷한(약 15점 이내) 견종끼리는 답변 조합에 따라 다른 견종이 뽑혀요. 같은 답이면 늘 같은 결과예요.
+const JIT=15,hsh=t=>{let h=2166136261;for(const c of t)h=Math.imul(h^c.charCodeAt(0),16777619);return (h>>>0)/4294967296};
+const seed=(x,k)=>hsh(k+JSON.stringify(S.st)+x.d.n);
+const adj=x=>x.sc+(PICK_BONUS[x.d.n]||0)+(REC_ADJ[x.d.n]||0)+JIT*seed(x,'r');
 const tiers=R=>[0,1,2].map(t=>R.filter(x=>x.d.pop===t).sort((a,b)=>adj(b)-adj(a)).slice(0,[3,2,1][t]));
 const top6=R=>tiers(R).flat().sort((a,b)=>b.sc-a.sc||a.d.pop-b.d.pop);
-const pick=(R,z,bad)=>{const rec=bad?new Set(top6(R).map(x=>x.d.n)):new Set(),a=R.filter(x=>x.d.z===z&&x.d.pop<2&&!rec.has(x.d.n));return bad?[...a].sort((x,y)=>x.sc-y.sc||x.d.pop-y.d.pop).slice(0,3):a.slice(0,3)};
+const pick=(R,z,bad)=>{const rec=bad?new Set(top6(R).map(x=>x.d.n)):new Set(),a=R.filter(x=>x.d.z===z&&x.d.pop<2&&!rec.has(x.d.n));return bad?[...a].sort((x,y)=>(x.sc+(AVO_ADJ[x.d.n]||0)-JIT*seed(x,'a'))-(y.sc+(AVO_ADJ[y.d.n]||0)-JIT*seed(y,'a'))).slice(0,3).sort((x,y)=>x.sc-y.sc):a.slice(0,3)};
 const group=(R,bad)=>{const G=bad?[1,2,3].map(z=>pick(R,z,1)):[top6(R)],H=bad?[1,2,3].map(z=>[SIZE[z]+'견',SZ[z]]):[['나와 잘 맞는 6마리','점수순 · 흔한 3 · 가끔 2 · 드문 1']],cnt={};G.flat().forEach(x=>(bad?x.cons:x.pros).forEach(t=>cnt[t]=(cnt[t]||0)+1));
  const com=Object.keys(cnt).filter(t=>cnt[t]>=3).sort((a,b)=>cnt[b]-cnt[a]).slice(0,3),skip=new Set(com);
  return (com.length?`<div class="com"><h3>${bad?'여러 견종에 공통으로 걸리는 점':'여러 견종에 공통으로 잘 맞는 점'}</h3><ul class="pc">${li(bad?'c':'p',com)}</ul></div>`:'')+G.map((a,k)=>{const L=bad?'cons':'pros',gc=(!bad||a.length<2)?[]:a[0][L].filter(t=>!skip.has(t)&&a.every(x=>x[L].includes(t))).slice(0,1),sk=new Set([...skip,...gc]);return `<section class="grp"><h3 class="gh">${H[k][0]}<small>${H[k][1]}</small></h3>${gc.length?`<ul class="pc">${li(bad?'c':'p',gc.map(t=>H[k][0]+' 공통: '+t))}</ul>`:''}${!bad&&a[0].sc<50?'<p class="hint">지금 생활에선 이 그룹의 견종이 전반적으로 쉽지 않아요.</p>':''}<div class="rows${bad?'':' good'}">${a.map((x,j)=>row(x,j+1,!bad,sk)).join('')}</div></section>`}).join('')};
