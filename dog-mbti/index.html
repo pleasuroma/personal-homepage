@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="MBTI와 생활 조건 11문항으로 절대 키우면 안 되는 견종과 운명의 견종을 찾아요.">
+<meta name="description" content="MBTI와 생활 조건 11문항으로 절대 키우면 안 되는 견종과 잘 맞는 견종을 찾아요.">
 <meta name="theme-color" content="#0b1311">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
@@ -13,13 +13,13 @@
 <meta name="apple-mobile-web-app-title" content="견종 매칭">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta property="og:title" content="MBTI 견종 매칭">
-<meta property="og:description" content="당신이 절대 키우면 안 되는 강아지, 그리고 운명의 강아지">
+<meta property="og:description" content="당신이 절대 키우면 안 되는 강아지, 그리고 나와 맞는 강아지">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 <title>MBTI 견종 매칭</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* Layout: 한 화면에 한 장씩 넘기는 카드 덱 (시작 → 11문항 → 분석 → 결과 6장) */
-:root{--bg:#0b1311;--surface:#111b18;--ink:#ede6d8;--muted:#9aa49d;--line:#24322d;--teal:#c9a96e;--gold2:#e8cf9c;--brass:#c9a96e;--brass-ink:#17120a;--warn:#e0957a;--green:#163029;
+:root{--bg:#0b1311;--surface:#111b18;--ink:#ede6d8;--muted:#9aa49d;--line:#24322d;--teal:#a9c4b4;--gold2:#cfdfd4;--brass:#a9c4b4;--brass-ink:#10201a;--warn:#e0957a;--green:#163029;
 --disp:"Noto Serif KR","Nanum Myeongjo",serif;--body:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;color-scheme:dark}
 body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--body)}
 .wrap{max-width:600px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -92,42 +92,42 @@ body{word-break:keep-all;overflow-wrap:break-word}
 .det{display:grid;gap:8px;padding:16px 0;border-top:1px solid var(--line)}.dh{display:flex;justify-content:space-between;align-items:baseline;gap:12px}.dh .v{font-family:var(--disp);font-size:24px;color:var(--teal)}
 .com{background:var(--bg);border-radius:12px;padding:12px 16px;display:grid;gap:6px}
 
-/* 고급형 리디자인: 딥 그린 + 샴페인 골드, 순차 등장 애니메이션 */
+/* 고급형 리디자인: 딥 그린 + 세이지, 순차 등장 애니메이션 */
 body{background:radial-gradient(120% 60% at 50% -10%,#1d3a31 0%,var(--bg) 60%) fixed,var(--bg);color:var(--ink)}
 h1,h2,h3{font-weight:700;letter-spacing:-.01em}h1{font-size:clamp(28px,7vw,40px);line-height:1.3}
 .brand{font-family:var(--disp);font-weight:700;letter-spacing:.02em}
-.prog b{background:linear-gradient(90deg,#8a6d3b,var(--gold2))}
-.stage{background:linear-gradient(180deg,#14211d,var(--surface));border-color:#2b3c35;box-shadow:0 30px 60px -30px rgba(0,0,0,.7),inset 0 1px 0 rgba(232,207,156,.08)}
+.prog b{background:linear-gradient(90deg,#5f7f70,var(--gold2))}
+.stage{background:linear-gradient(180deg,#14211d,var(--surface));border-color:#2b3c35;box-shadow:0 30px 60px -30px rgba(0,0,0,.7),inset 0 1px 0 rgba(207,223,212,.08)}
 .eyebrow{color:var(--gold2);letter-spacing:.14em}
-.tag{background:linear-gradient(135deg,#e8cf9c,#b8924f 60%,#d9bb82);color:var(--brass-ink);border-radius:16px 48px 48px 16px;padding:16px 24px 16px 52px;box-shadow:0 12px 30px -12px rgba(201,169,110,.5);overflow:hidden}
-.tag::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);transform:translateX(-100%);animation:shine 4s ease-in-out 1s infinite}
+.tag{background:linear-gradient(135deg,#dfe8e2,#9fb8a9 60%,#c3d4c9);color:var(--brass-ink);border-radius:16px 48px 48px 16px;padding:16px 24px 16px 52px;box-shadow:0 12px 30px -12px rgba(150,180,163,.5);overflow:hidden}
+.tag::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.3) 50%,transparent 70%);transform:translateX(-100%);animation:shine 4s ease-in-out 1s infinite}
 .tag::before{background:var(--surface)}.tag .t{font-family:var(--disp);font-weight:900;font-size:40px}
 .kw.sub{font-size:13px;font-weight:700;opacity:.8}
 .facts b{font-family:var(--disp);font-weight:700;color:var(--gold2)}
-.cta{font-family:var(--disp);font-weight:700;background:linear-gradient(135deg,#ecd5a5,#c09a5a);color:var(--brass-ink);position:relative;overflow:hidden;box-shadow:0 10px 30px -10px rgba(201,169,110,.7);transition:transform .15s}
+.cta{font-family:var(--disp);font-weight:700;background:linear-gradient(135deg,#e3ebe5,#a7bfb0);color:var(--brass-ink);position:relative;overflow:hidden;box-shadow:0 10px 30px -10px rgba(150,180,163,.7);transition:transform .15s}
 .cta:active{transform:scale(.97)}
 .cta.big{align-self:stretch;display:flex;justify-content:center;align-items:center;gap:12px;font-size:20px;padding:18px 24px;animation:pulse 2.4s ease-in-out 1.2s infinite}
 .cta.big i{font-style:normal;transition:transform .2s;animation:nudge 1.6s ease-in-out infinite}
-.cta.big::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);transform:translateX(-100%);animation:shine 3s ease-in-out .8s infinite}
+.cta.big::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.35) 50%,transparent 65%);transform:translateX(-100%);animation:shine 3s ease-in-out .8s infinite}
 .tap{margin:-8px 0 0;text-align:center;font-size:12.5px;color:var(--muted)}
 .opt{background:rgba(255,255,255,.02);border-color:#2b3c35;transition:border-color .2s,background .2s,transform .15s}
 .opt:hover{border-color:var(--brass)}.opt:active{transform:scale(.98)}
 .opt b{font-family:var(--disp);font-weight:900;color:var(--gold2)}
-.opt[aria-pressed="true"]{background:linear-gradient(135deg,#e8cf9c,#c09a5a);border-color:transparent;color:var(--brass-ink)}
+.opt[aria-pressed="true"]{background:linear-gradient(135deg,#dfe8e2,#a7bfb0);border-color:transparent;color:var(--brass-ink)}
 .opt[aria-pressed="true"] b,.opt[aria-pressed="true"] small{color:var(--brass-ink)}
 .ghost{border-color:#33453e}.dots button[aria-current="true"]{background:var(--gold2)}
 .alert{background:linear-gradient(135deg,#5a2418,#8c3b26);color:#f6e3d8;border:1px solid rgba(224,149,122,.35)}
 .com{background:rgba(255,255,255,.03);border:1px solid var(--line)}
 .chips span{background:rgba(255,255,255,.03)}
 .good .v,.dh .v{color:var(--gold2)}.v{font-family:var(--disp);font-weight:900}
-.s5 i.on{background:linear-gradient(90deg,#b8924f,var(--gold2))}
+.s5 i.on{background:linear-gradient(90deg,#9fb8a9,var(--gold2))}
 .spin{border-top-color:var(--gold2)}
 .pg>*{animation:up .55s cubic-bezier(.2,.7,.2,1) both}
 .pg>:nth-child(2){animation-delay:.06s}.pg>:nth-child(3){animation-delay:.12s}.pg>:nth-child(4){animation-delay:.18s}.pg>:nth-child(5){animation-delay:.24s}.pg>:nth-child(6){animation-delay:.3s}.pg>:nth-child(n+7){animation-delay:.36s}
 .opt,.rows>div,.det,.grp>.pc{animation:up .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(.15s + var(--i,0)*70ms)}
 @keyframes up{from{opacity:.05;transform:translateY(14px)}}
 @keyframes shine{0%{transform:translateX(-100%)}40%,100%{transform:translateX(100%)}}
-@keyframes pulse{0%,100%{box-shadow:0 10px 30px -10px rgba(201,169,110,.7),0 0 0 0 rgba(232,207,156,.45)}50%{box-shadow:0 10px 30px -10px rgba(201,169,110,.7),0 0 0 10px rgba(232,207,156,0)}}
+@keyframes pulse{0%,100%{box-shadow:0 10px 30px -10px rgba(150,180,163,.7),0 0 0 0 rgba(207,223,212,.45)}50%{box-shadow:0 10px 30px -10px rgba(150,180,163,.7),0 0 0 10px rgba(207,223,212,0)}}
 @keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
 @media (prefers-reduced-motion:reduce){.pg>*,.opt,.rows>div,.det,.grp>.pc,.cta.big,.cta.big i,.cta.big::after,.tag::after{animation:none}}
 </style>
@@ -263,7 +263,7 @@ const QS=[
 {k:'shed',t:'털 빠짐과 알레르기는 어느 정도까지 괜찮나요?',o:[['ok','상관없어요','털이 많이 빠져도 괜찮아요','털 상관없음'],['mid','적게 빠지면 좋겠어요','가벼운 청소 부담 정도는 괜찮아요','털 적게'],['sens','거의 빠지지 않아야 해요','본인이나 가족에게 알레르기가 있어요','털 거의 없게']]},
 {k:'kid',t:'함께 사는 가족 중 초등학생 이하 자녀가 있나요?',o:[['no','없어요','','어린 자녀 없음'],['yes','있어요','','어린 자녀 있음']]},
 {k:'groom',t:'빗질과 미용에 쓸 수 있는 시간은 어느 정도인가요?',o:[['low','주 1회 이하','털 관리가 간단한 견종이 좋아요','빗질 주 1회 이하'],['mid','주 2~3회 빗질','미용은 가끔 할 수 있어요','빗질 주 2~3회'],['high','매일 빗질, 정기 미용 가능','4~6주마다 미용해도 괜찮아요','매일 빗질·정기 미용']]}];
-const RL=['절대 키우면 안 되는 견종','운명의 견종 한눈에','소형견 자세히','중형견 자세히','대형견 자세히','입양 전 약속'];
+const RL=['절대 키우면 안 되는 견종','잘 맞는 견종 한눈에','소형견 자세히','중형견 자세히','대형견 자세히','입양 전 약속'];
 const FB='MBTI 성향보다 지금의 생활과 잘 맞아 추천됐어요';
 let S={st:{},mode:'intro',qi:0,ri:0},lock=false,R=null;
 
@@ -290,11 +290,11 @@ const li=(c,a)=>a.map(t=>`<li class="${c}">${t}</li>`).join('');
 const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f(x.pros).slice(0,1))+li('c',[x.d.warn]):li('c',[x.d.warn].concat(f(x.cons).slice(0,1)));return `<div><h3><span class="no">${j}</span>${x.d.n}</h3><span class="v">${x.sc}%</span><p class="note" style="grid-column:1/-1;margin:0">${x.d.note}</p><ul class="pc">${L}</ul></div>`};
 const nav=(a,b,mid,okPrev,okNext)=>`<nav class="nav"><button type="button" class="ghost" data-act="${a}"${okPrev?'':' disabled'}>이전</button>${mid}<button type="button" class="ghost" data-act="${b}"${okNext?'':' disabled'}>다음</button></nav>`;
 
-function intro(){return `<div class="eyebrow">국내에서 사랑받는 견종 100종</div><h1>절대 키우면 안 되는 강아지, 그리고 운명의 강아지</h1>
+function intro(){return `<div class="eyebrow">국내에서 사랑받는 견종 100종</div><h1>절대 키우면 안 되는 강아지, 그리고 나와 맞는 강아지</h1>
 <p class="lead">MBTI와 지금의 삶을 담은 11개의 질문으로, 100종 가운데 소형·중형·대형별로 피해야 할 견종 3마리와 잘 맞는 견종 3마리를 찾아드려요.</p>
 <div class="tag"><span class="t">MBTI</span><span class="kw sub">성향 · 생활 · 100종</span></div>
 <div class="facts"><span><b>11</b>문항</span><span><b>100</b>견종</span><span><b>6</b>장 결과</span></div>
-<button type="button" class="cta big" data-act="start"><span>내 운명의 강아지 찾기</span><i aria-hidden="true">→</i></button><p class="tap">버튼을 눌러 시작해요 · 약 1분</p><div class="grow"></div>
+<button type="button" class="cta big" data-act="start"><span>나와 맞는 강아지 찾기</span><i aria-hidden="true">→</i></button><p class="tap">버튼을 눌러 시작해요 · 약 1분</p><div class="grow"></div>
 <p class="hint">끝까지 함께할 수 있는 아이를 고르는 일, 그게 유기를 막는 가장 따뜻한 첫걸음이에요.</p>`}
 
 function qPage(){const q=QS[S.qi],mb=S.qi<4,v=S.st[q.k];
@@ -315,9 +315,9 @@ const detail=(x,j)=>{const d=x.d;return `<article class="det"><div class="dh"><h
 
 function rPage(){const R=results(),T=type(),i=S.ri;let h='';
 if(i===0)h=`<div class="alert"><div class="eyebrow">경고 · 지금의 생활 기준</div><h2>${T.join('')}인 당신이<br>절대 키우면 안 되는 견종</h2></div><p class="hint">아이들의 잘못이 아니에요. 지금의 생활과 맞지 않을 뿐이에요. 크기별로 3마리씩 골랐어요.</p>${group(R,1)}<p class="hint">그렇다면 나와 맞는 아이는 누구일까요? 다음 장에서 만나요.</p>`;
-else if(i===1)h=`<div class="tag"><span class="t">${T.join('')}</span><span class="kw">${T.map(c=>`<span>${KW[c]}</span>`).join('')}</span></div><h2>평생을 함께할 운명의 견종</h2>
+else if(i===1)h=`<div class="tag"><span class="t">${T.join('')}</span><span class="kw">${T.map(c=>`<span>${KW[c]}</span>`).join('')}</span></div><h2>나와 잘 맞는 견종</h2>
  <div class="chips">${QS.slice(4).map(q=>`<span>${q.o.find(o=>o[0]===S.st[q.k])[3]}</span>`).join('')}</div>${group(R,0)}<p class="hint">크기별로 자세히 보려면 다음 장으로 넘겨 주세요.</p>`;
-else if(i<=4){const z=i-1;h=`<div class="eyebrow">운명의 견종 · ${SIZE[z]}견 ${SZ[z]}</div><h2>${SIZE[z]}견 TOP 3 자세히</h2><div>${pick(R,z,0).map((x,j)=>detail(x,j+1)).join('')}</div>`}
+else if(i<=4){const z=i-1;h=`<div class="eyebrow">잘 맞는 견종 · ${SIZE[z]}견 ${SZ[z]}</div><h2>${SIZE[z]}견 TOP 3 자세히</h2><div>${pick(R,z,0).map((x,j)=>detail(x,j+1)).join('')}</div>`}
 else h=`<div class="eyebrow">입양 전 약속</div><h2>평생을 약속하기 전에, 마지막으로 물어봐요</h2>
  <ul class="chk"><li>15년 남짓한 이 아이의 일생을 끝까지 함께할 수 있나요?</li><li>사료와 병원, 미용까지 매달 드는 비용을 감당할 수 있나요?</li><li>이사, 결혼, 출산, 이직으로 삶이 바뀌어도 이 아이의 자리는 그대로인가요?</li><li>생후 2개월이 지나면 동물등록을 꼭 해 주세요.</li></ul>
  <div><h3 style="margin-bottom:4px">사지 말고, 먼저 만나 주세요</h3><p class="hint">보호소에도 이 목록 속 견종과 세상에 하나뿐인 믹스견들이 가족을 기다리고 있어요. <a href="https://www.animal.go.kr" target="_blank" rel="noopener">국가동물보호정보시스템</a>, <a href="https://pawinhand.kr" target="_blank" rel="noopener">포인핸드</a>에서 만날 수 있어요.</p></div>
