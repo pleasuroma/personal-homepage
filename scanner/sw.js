@@ -1,4 +1,4 @@
-const C='baroscan-v4',CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+const C='baroscan-v5',CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(CORE)));self.skipWaiting()});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 // 캐시 먼저 보여주고 백그라운드에서 새 버전으로 갱신 (오프라인에서도 동작)
