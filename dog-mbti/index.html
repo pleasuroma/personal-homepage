@@ -422,7 +422,7 @@ function score(d){
   fit=Math.min(fit,12);
   const pros=dims.filter(x=>x[1]>=.6).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>WHY[x[0]]).concat(extra);
   if(!pen)pros.unshift('지금의 생활 그대로 이 아이를 맞이할 수 있어요');
-  return{d,mb,sc:Math.min(99,Math.round(100*(.35*mb+.65*Math.max(0,1-pen)))+fit),pros:pros.length?pros.slice(0,3):[FB],cons:cons.sort((a,b)=>b[0]-a[0]).map(x=>x[1])};
+  return{d,mb,sc:Math.round((100*(.35*mb+.65*Math.max(0,1-pen))+fit)*99/112),pros:pros.length?pros.slice(0,3):[FB],cons:cons.sort((a,b)=>b[0]-a[0]).map(x=>x[1])};
 }
 const results=()=>R||(R=B.map(score).sort((a,b)=>b.sc-a.sc||a.d.pop-b.d.pop||b.mb-a.mb));
 const type=()=>[S.st.m0,S.st.m1,S.st.m2,S.st.m3];
