@@ -433,7 +433,10 @@ async function runOCR(){
   try{
     const w=await getOCR(),lines=[];
     for(const it of sides){const{data}=await w.recognize(it.blob);
-      for(const l of data.lines||[])if(l.text.trim()&&(l.confidence>=35||/[\d@]/.test(l.text)))lines.push({t:l.text.trim(),h:l.bbox.y1-l.bbox.y0})}
+      for(const l of data.lines||[]){const h=l.bbox.y1-l.bbox.y0,ws=(l.words||[]).filter(w=>w.text.trim());let seg=[];
+        const push=()=>{if(!seg.length)return;const t=seg.map(w=>w.text).join(' ').trim(),c=seg.reduce((a,w)=>a+w.confidence,0)/seg.length;seg=[];if(t&&(c>=30||/[\d@]/.test(t)))lines.push({t,h})};
+        if(!ws.length){if(l.text.trim())lines.push({t:l.text.trim(),h});continue}
+        ws.forEach((w,i)=>{if(i&&w.bbox.x0-ws[i-1].bbox.x1>h*1.2)push();seg.push(w)});push()}}
     if(my!==ocrSeq)return;
     $('#raw').textContent=lines.map(l=>l.t).join('\n')||'(읽은 글자 없음)';
     const r=parseCard(lines);if(!r.note)r.note='명함 스캔 '+new Date().toLocaleDateString('ko-KR');
@@ -444,18 +447,22 @@ async function runOCR(){
 
 // 명함 OCR 결과 → 항목 분류 (한국 명함 관례 기준)
 const RE_TITLE=/(대표이사|대표원장|대표|부원장|병원장|원장|부회장|회장|부사장|사장|전무|상무|이사|감사|본부장|센터장|실장|팀장|부장|차장|과장|대리|주임|사원|선임|책임|수석|연구원|소장|국장|교수|강사|간호사|수의사|의사|약사|변호사|변리사|세무사|회계사|노무사|매니저|디렉터|컨설턴트|디자이너|개발자|엔지니어|CEO|CTO|CFO|COO|President|Director|Manager|Engineer|Designer|Developer|Consultant|Professor|Partner|Founder|DVM|Ph\.?D)/i;
-const RE_ORG=/(주식회사|\(주\)|㈜|유한회사|법인|협동조합|병원|의원|클리닉|메디컬|센터|그룹|재단|협회|학회|대학교|대학|연구소|사무소|컴퍼니|스튜디오|\b(inc|corp|corporation|co\.?,?\s*ltd|ltd|llc|company|group|clinic|hospital|studio)\b)/i;
-const RE_ADDR=/(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|충청|전북|전남|전라|경북|경남|경상|제주)|[가-힣\d]+(로|길)\s?\d|\d+\s?층|[가-힣]+(시|군|구|동|읍|면)\s|\b(street|road|avenue|suite|floor|seoul|korea|[a-z]+-(ro|gil|gu|si))\b/i;
-const RE_DEPT=/(팀|부|실|본부|사업부|센터|과|파트|그룹|team|dept\.?|department|division)$/i;
+const RE_ORG=/(college|university|institute|school|academy|foundation|association|society|\btech\b|veterinary|medical center|주식회사|\(주\)|㈜|유한회사|법인|협동조합|병원|의원|클리닉|메디컬|센터|그룹|재단|협회|학회|대학교|대학|연구소|사무소|컴퍼니|스튜디오|\b(inc|corp|corporation|co\.?,?\s*ltd|ltd|llc|company|group|clinic|hospital|studio)\b)/i;
+const RE_ADDR=/\d+\s+[A-Za-z .'-]+\b(dr|st|ave|rd|blvd|ln|way|pkwy|hwy|ct|pl|drive|lane)\b\.?|\b[A-Z]{2}\s?\d{5}(-\d{4})?\b|\b(suite|ste\.?)\s?\d|(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|충청|전북|전남|전라|경북|경남|경상|제주)|[가-힣\d]+(로|길)\s?\d|\d+\s?층|[가-힣]+(시|군|구|동|읍|면)\s|\b(street|road|avenue|suite|floor|seoul|korea|[a-z]+-(ro|gil|gu|si))\b/i;
+const RE_DEPT=/(팀|부|실|본부|사업부|센터|과|파트|그룹|team|dept\.?|department|division|sciences|program|service)$/i;
+const RE_CRED=/^(DVM|VMD|BVSc|DACVIM|DACVECC|DACVS|DACVR|DACVO|DACVD|DACVAA|DACVP|DECVIM|PhD|Ph\.D\.?|MD|MS|MSc|MPH|MBA|RN|CVT|RVT|DDS|PharmD)\b/i;
 function fmtPhone(s){let d=s.replace(/\D/g,'');if(d.startsWith('82'))d='0'+d.slice(2).replace(/^0/,'');
   if(/^02/.test(d))return d.replace(/^(02)(\d{3,4})(\d{4})$/,'$1-$2-$3');
   if(/^1[5-9]\d{6}$/.test(d))return d.replace(/^(\d{4})(\d{4})$/,'$1-$2');
+  if(/^1?[2-9]\d{9}$/.test(d)&&!/^0/.test(d)){d=d.slice(-10);return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`}
   return d.replace(/^(0\d{2})(\d{3,4})(\d{4})$/,'$1-$2-$3')}
 function parseCard(lines){
   const r={fn:'',org:'',dept:'',title:'',mobile:'',tel:'',fax:'',email:'',url:'',adr:'',note:''},extra=[];
   const L=lines.map(l=>{let t=l.t.replace(/[|_~`"“”‘’<>{}\[\]]/g,' ').replace(/\s+/g,' ').trim();
     const tk=t.split(' ');if(tk.length>2&&tk.filter(x=>/^[가-힣]$/.test(x)).length>=tk.length*.8)t=tk.join('');
-    return{t,h:l.h,used:false}}).filter(l=>l.t.length>1);
+    t=t.replace(/[,;.\s]+$/,'');return{t,h:l.h,used:false}}).filter(l=>l.t.length>1);
+  const cred=[];for(const l of L){const m=l.t.match(/^([A-Z][A-Za-z'-]+(?: [A-Z]\.?)?(?: [A-Z][A-Za-z'-]+){1,2}),\s*(.+)$/);
+    if(m&&m[2].split(/,\s*/).every(x=>RE_CRED.test(x)))l.t=m[1],cred.push(m[2]);else if(l.t.split(/,\s*/).every(x=>RE_CRED.test(x.trim()))){cred.push(l.t);l.used=true}}
   for(const l of L){
     let t=l.t;
     const em=t.replace(/\s*@\s*/g,'@').match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/);
@@ -463,7 +470,7 @@ function parseCard(lines){
     const ur=t.match(/((https?:\/\/)?(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|net|org|co\.kr|or\.kr|ac\.kr|go\.kr|kr|io|me|biz|info|clinic|vet)(\/\S*)?)/i);
     if(ur&&!/@/.test(ur[0])&&(/www\.|https?:/i.test(ur[0])||!em)){if(!r.url)r.url=ur[0].toLowerCase();l.used=true}
     const re=/(\+?\s?82[\s.)-]*)?\(?0?\d{1,4}\)?[\s.)-]?\d{3,4}[\s.-]?\d{4}/g;let m;
-    while((m=re.exec(t))){const d=m[0].replace(/\D/g,'');if(!(d.length>=9&&/^(0|82)/.test(d))&&!/^1[5-9]\d{6}$/.test(d))continue;
+    while((m=re.exec(t))){const d=m[0].replace(/\D/g,'');if(!(d.length>=9&&/^(0|82)/.test(d))&&!/^1[5-9]\d{6}$/.test(d)&&!/^1?[2-9]\d{9}$/.test(d))continue;
       const pre=t.slice(Math.max(0,m.index-12),m.index),num=fmtPhone(m[0]);l.used=true;
       let kind=/(fax|f|팩스|팩)\W*$/i.test(pre)?'fax':/(m|mob|mobile|hp|h\.p|c\.?p|cell|휴대폰|휴대전화|핸드폰|모바일)\W*$/i.test(pre)?'mobile':/(t|tel|phone|ph|o|office|d|direct|전화|대표|직통|사무실)\W*$/i.test(pre)?'tel':/^(01[016789]|8210)/.test(d)?'mobile':'tel';
       if(!r[kind])r[kind]=num;else extra.push(num)}
@@ -472,18 +479,20 @@ function parseCard(lines){
   // 이름: 한글 2~4자(직함 제외) 중 글자 크기가 가장 큰 줄
   let best=null;
   for(const l of free()){const s=l.t.replace(RE_TITLE,'').replace(/[\s·.,:]/g,'');if(/^[가-힣]{2,4}$/.test(s)&&!RE_ORG.test(l.t)&&!RE_ADDR.test(l.t)&&(!best||l.h>best.h))best=Object.assign(l,{nm:s})}
-  if(!best)for(const l of free())if(/^[A-Z][A-Za-z'-]+( [A-Z][A-Za-z'-]+){1,2}$/.test(l.t)&&!RE_TITLE.test(l.t)&&!RE_ORG.test(l.t)&&(!best||l.h>best.h))best=Object.assign(l,{nm:l.t});
+  if(!best)for(const l of free())if(/^[A-Z][A-Za-z'-]+( [A-Z]\.?)?( [A-Z][A-Za-z'-]+){1,2}$/.test(l.t)&&!RE_TITLE.test(l.t)&&!RE_ORG.test(l.t)&&(!best||l.h>best.h))best=Object.assign(l,{nm:l.t});
   if(best){r.fn=best.nm;best.used=true;const tm=best.t.match(RE_TITLE);if(tm)r.title=best.t.replace(/\s/g,'').replace(best.nm,'').trim()}
   for(const l of free()){if(l.t.length>30||RE_ADDR.test(l.t))continue;
     const hasT=RE_TITLE.test(l.t),parts=l.t.split(/\s*[\/|,·]\s*|\s+/),dp=parts.filter(p=>RE_DEPT.test(p)&&!RE_TITLE.test(p));
+    if(!hasT&&!/[가-힣]/.test(l.t)&&RE_DEPT.test(l.t)&&l.t.length<=40&&!/\d/.test(l.t)&&!RE_ORG.test(l.t)){if(!r.dept){r.dept=l.t;l.used=true}continue}
     if(!hasT&&!(dp.length&&l.t.length<=15&&!/\d/.test(l.t)&&!RE_ORG.test(l.t)))continue;
     if(dp.length&&!r.dept){r.dept=dp.join(' ');l.used=true}
     if(hasT&&!r.title){r.title=parts.filter(p=>!dp.includes(p)).join(' ');l.used=true}}
-  const addr=[];for(const l of free())if(RE_ADDR.test(l.t)&&/\d/.test(l.t)){l.used=true;addr.push(l.t.replace(/^(주소|address|addr?|a)\s*[:.)]?\s*/i,''))}
+  const addr=[];for(const l of free())if(RE_ADDR.test(l.t)&&/\d/.test(l.t)&&!RE_TITLE.test(l.t)){l.used=true;addr.push(l.t.replace(/^(주소|address|addr?|a)\s*[:.)]?\s*/i,''))}
   r.adr=addr.slice(0,2).join(' ');
-  const orgs=free().filter(l=>RE_ORG.test(l.t)).sort((a,b)=>b.h-a.h);
-  if(orgs[0]){r.org=orgs[0].t;orgs[0].used=true}
+  const orgs=free().filter(l=>RE_ORG.test(l.t)).sort((a,b)=>/college|병원|의원|clinic|hospital/i.test(b.t)-/college|병원|의원|clinic|hospital/i.test(a.t)||b.h-a.h);
+  if(orgs[0]){r.org=orgs[0].t;orgs[0].used=true;const nx=L[L.indexOf(orgs[0])+1];if(nx&&!nx.used&&/^(of|for|and|&)\b/i.test(nx.t)){r.org+=' '+nx.t;nx.used=true}}
   if(!r.org){const c=free().filter(l=>l.t.length<=20&&!/\d/.test(l.t)).sort((a,b)=>b.h-a.h)[0];if(c){r.org=c.t;c.used=true}}
+  if(cred.length)r.title=[r.title,cred.join(', ')].filter(Boolean).join(' · ');
   if(extra.length)r.note=extra.join(', ');
   return r;
 }
