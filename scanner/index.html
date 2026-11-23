@@ -534,7 +534,7 @@ function parseCard(lines){
   const addr=[];for(const l of free())if(RE_ADDR.test(l.t)&&/\d/.test(l.t)&&!RE_TITLE.test(l.t)){l.used=true;addr.push(l.t.replace(/^(주소|address|addr?|a)\s*[:.)]?\s*/i,''))}
   r.adr=addr.slice(0,2).join(' ');
   const orgs=free().filter(l=>RE_ORG.test(l.t)).sort((a,b)=>/college|병원|의원|clinic|hospital/i.test(b.t)-/college|병원|의원|clinic|hospital/i.test(a.t)||b.h-a.h);
-  if(orgs[0]){r.org=orgs[0].t;orgs[0].used=true;const nx=L[L.indexOf(orgs[0])+1];if(nx&&!nx.used&&/^(of|for|and|&)\b/i.test(nx.t)){r.org+=' '+nx.t;nx.used=true}}
+  if(orgs[0]){r.org=orgs[0].t;orgs[0].used=true;const oi=L.indexOf(orgs[0]),nx=L.slice(oi+1,oi+4).find(x=>!x.used&&/^(of|for|and|&)\s/i.test(x.t));if(nx){r.org+=' '+nx.t;nx.used=true}}
   if(!r.org){const c=free().filter(l=>l.t.length<=20&&!/\d/.test(l.t)).sort((a,b)=>b.h-a.h)[0];if(c){r.org=c.t;c.used=true}}
   if(cred.length)r.title=[r.title,cred.join(', ')].filter(Boolean).join(' · ');
   if(extra.length)r.note=extra.join(', ');
