@@ -352,6 +352,9 @@ B.forEach(d=>d.dz=DZ[d.n]||[]);
 // MMVD(이첨판막 질환) 고위험 견종
 const MMVD=new Set('카발리에 킹 찰스 스패니얼,치와와,말티즈,토이 푸들,미니어처 푸들,요크셔 테리어,시츄,포메라니안,닥스훈트,미니어처 슈나우저,파피용,페키니즈,재패니즈 친,말티푸,휘핏'.split(','));
 B.forEach(d=>{d.mv=MMVD.has(d.n);if(d.mv)d.dz=d.dz.filter(t=>t!=='이첨판막 질환(MMVD)')});
+// 선천성 심장 질환이 잘 생기는 견종과 대표 질환
+const CHD=Object.fromEntries('말티즈|동맥관 개존증;포메라니안|동맥관 개존증;토이 푸들|동맥관 개존증;미니어처 푸들|동맥관 개존증;요크셔 테리어|동맥관 개존증;말티푸|동맥관 개존증;비숑 프리제|동맥관 개존증;셔틀랜드 쉽독|동맥관 개존증;웰시 코기|동맥관 개존증;치와와|동맥관 개존증,폐동맥 협착;키스혼드|팔로 4징,동맥관 개존증;프렌치 불독|폐동맥 협착;잉글리시 불독|폐동맥 협착,심실중격 결손;비글|폐동맥 협착;미니어처 슈나우저|폐동맥 협착;사모예드|폐동맥 협착,심방중격 결손;골든 리트리버|대동맥판 하부 협착;뉴펀들랜드|대동맥판 하부 협착;로트와일러|대동맥판 하부 협착;저먼 셰퍼드|대동맥판 하부 협착,동맥관 개존증;래브라도 리트리버|삼첨판 이형성증;불테리어|승모판 이형성증,대동맥판 협착;그레이트 데인|승모판 이형성증'.split(';').map(l=>{const [k,v]=l.split('|');return [k,v.split(',')]}));
+B.forEach(d=>{d.ch=CHD[d.n];if(d.ch)d.dz=d.dz.filter(t=>!d.ch.includes(t))});
 const n=x=>(x-1)/4,r=x=>(5-x)/4;
 const DIM={E:d=>.6*n(d.f)+.4*n(d.e),I:d=>.5*r(d.b)+.3*r(d.e)+.2*r(d.f),S:d=>.5*r(d.g)+.5*r(d.p),N:d=>.7*n(d.p)+.3*n(d.t),T:d=>.7*n(d.i)+.3*r(d.a),F:d=>.7*n(d.a)+.3*n(d.f),J:d=>n(d.t),P:d=>.4*r(d.g)+.3*n(d.i)+.3*n(d.p)};
 const WHY={E:'사람과 친구를 반기는 아이라, 함께 걷는 길마다 새로운 인연이 생겨요',I:'조용하고 차분한 아이라, 고요한 나의 시간을 함께 지켜 줘요',S:'한결같고 손이 덜 가는 아이라, 소박한 일상에 자연스레 스며들어요',N:'호기심 가득한 아이라, 매일 새로운 놀이를 함께 꿈꿀 수 있어요',T:'스스로 설 줄 아는 아이라, 서로의 공간을 존중하며 담백하게 사랑할 수 있어요',F:'애정 표현이 풍부한 아이라, 마음을 나누는 기쁨이 매일 쌓여요',J:'배우기를 좋아하는 아이라, 함께 만든 약속과 루틴이 단단해져요',P:'적응력이 좋은 아이라, 즉흥적인 하루에도 기꺼이 함께해요'};
@@ -394,7 +397,7 @@ const type=()=>[S.st.m0,S.st.m1,S.st.m2,S.st.m3];
 const ring=v=>`<div class="ring" style="--v:${v}"><span>${v}<small>%</small></span></div>`;
 const MET=[['운동량','e'],['외로움 탐','a'],['털 빠짐','s'],['짖음','b'],['털 관리','g'],['훈련 쉬움','t'],['개 친구','dg'],['고양이 친구','ct']];
 const li=(c,a)=>a.map(t=>`<li class="${c}">${t}</li>`).join('');
-const dzl=d=>`${d.mv?'<p class="dz"><b class="mv">MMVD(이첨판막 질환) 고위험군</b>중년(5~6살)부터 매년 심장 청진을 권해요</p>':''}<p class="dz"><span>유전·호발 질환</span>${d.dz.join(' · ')}</p>`;
+const dzl=d=>`${d.mv?'<p class="dz"><b class="mv">MMVD(이첨판막 질환) 고위험군</b>중년(5~6살)부터 매년 심장 청진을 권해요</p>':''}${d.ch?`<p class="dz"><b class="mv">선천성 심장 질환 주의</b>${d.ch.join(' · ')} · 입양 초기에 심장 청진을 권해요</p>`:''}<p class="dz"><span>유전·호발 질환</span>${d.dz.join(' · ')}</p>`;
 const row=(x,j,good,skip)=>{const f=a=>a.filter(t=>!skip.has(t)),L=good?li('p',f(x.pros).slice(0,1))+li('c',[x.d.warn]):li('c',[x.d.warn].concat(f(x.cons).slice(0,1)));return `<div><h3><span class="no">${j}</span>${x.d.n}</h3><span class="v">${x.sc}%</span><p class="note" style="grid-column:1/-1;margin:0">${x.d.note}</p>${dzl(x.d)}<ul class="pc">${L}</ul></div>`};
 const nav=(a,b,mid,okPrev,okNext)=>`<nav class="nav"><button type="button" class="ghost" data-act="${a}"${okPrev?'':' disabled'}>이전</button>${mid}<button type="button" class="ghost" data-act="${b}"${okNext?'':' disabled'}>다음</button></nav>`;
 
